@@ -9,7 +9,7 @@ class RPNcalc
 {
 private:
 public:
-    Stack<Op> *stack;
+    Stack *stack;
 
     RPNcalc(void);
     bool getOperands(Op *op1, Op *op2);

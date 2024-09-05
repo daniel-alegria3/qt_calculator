@@ -1,7 +1,6 @@
 #include <iostream>
-#include <stdio.h>
+#include <stdexcept>
 #include "appcontroller.h"
-#include "rpncalc.h"
 
 using namespace std;
 
@@ -11,20 +10,21 @@ AppController::AppController (void) {
 
 void AppController::loop(void) {
     string input;
-    int ok; double num; char c;
-    bool running;
+    int ok;
+    double num;
+    char ch;
+
+    bool running = true;
     while (running) {
         cout << "Ingrese un numero o un operador ('q' para salir): ";
-        // cin >> input;
-        //
-        ok = scanf(" %lf", &num);
+        cin >> input;
 
-        if (ok != EOF) {
+        ok = sscanf(input.c_str(), " %lf", &num);
+        if (ok != 0) {
             rpn->enterNumber(num);
-
-        } else {
-            scanf(" %c", &c);
-            switch (c) {
+        } else if (ok != EOF) {
+            sscanf(input.c_str(), " %c", &ch);
+            switch (ch) {
                 case 'q':
                     running = false;
                     break;
@@ -49,8 +49,8 @@ void AppController::loop(void) {
                 default:
                     cout << "Error: Ingrese un operador valido!" << endl;
                     break;
-                cout << "--------------\n"+rpn->stack->dump()+"--------------\n";
             }
+            cout << "--------------\n"+rpn->stack->dump()+"--------------\n";
         }
     }
 }

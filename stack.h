@@ -3,31 +3,29 @@
 #include <string>
 using namespace std;
 
-template <class Elem>
 class Node
 {
 private:
 public:
-    Elem value;
+    double value;
     Node *next;
 
     Node (void);
-    Node (Elem value, Node *next);
+    Node (double value, Node *next);
     Node (Node *next);
 };
 
 
-template <class Elem>
 class Stack
 {
 private:
-    Node<Elem> *top;
+    Node *top;
 
 public:
     Stack();
-    void push(Elem elem);
-    Elem pop(void);
-    Elem peek(void);
+    void push(double elem);
+    double pop(void);
+    double peek(void);
     bool is_empty(void);
     string dump(void);
 };

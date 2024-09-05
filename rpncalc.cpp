@@ -5,7 +5,7 @@
 using namespace std;
 
 RPNcalc::RPNcalc (void) {
-    stack = new Stack<Op>();
+    stack = new Stack();
 }
 
 bool RPNcalc::getOperands(Op *op1, Op *op2) {
@@ -13,15 +13,15 @@ bool RPNcalc::getOperands(Op *op1, Op *op2) {
         cout << "Pila vacia! Ingrese un numero" << endl;
         return false;
     }
-
     *op2 = stack->pop();
+
     if (stack->is_empty()) {
         cout << "Se requiere dos numeros!" << endl;
         stack->push(*op2);
         return false;
     }
-
     *op1 = stack->pop();
+
     return true;
 }
 
@@ -30,8 +30,8 @@ bool RPNcalc::getOperand(Op *op) {
         cout << "Pila vacia! Ingrese un numero" << endl;
         return false;
     }
-
     *op = stack->pop();
+
     return true;
 }
 
