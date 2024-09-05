@@ -2,7 +2,7 @@
 
 Node::Node (void) {}
 
-Node::Node (double value, Node *next) {
+Node::Node (Elem value, Node *next) {
     this->value = value;
     this->next = next;
 }
@@ -16,19 +16,19 @@ Stack::Stack() {
     this->top = new Node(NULL);
 }
 
-void Stack::push(double elem) {
+void Stack::push(Elem elem) {
     top->next = new Node(elem, top->next);
 }
 
-double Stack::pop(void) {
-    double value = top->next->value;
+Elem Stack::pop(void) {
+    Elem value = top->next->value;
     Node *del = top->next;
     top->next = top->next->next;
     free(del);
     return value;
 }
 
-double Stack::peek(void) {
+Elem Stack::peek(void) {
     return top->next->value;
 }
 

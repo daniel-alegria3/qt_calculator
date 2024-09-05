@@ -3,6 +3,8 @@
 #include <string>
 using namespace std;
 
+typedef double Elem;
+
 class Node
 {
 private:
@@ -11,7 +13,7 @@ public:
     Node *next;
 
     Node (void);
-    Node (double value, Node *next);
+    Node (Elem value, Node *next);
     Node (Node *next);
 };
 
@@ -23,9 +25,9 @@ private:
 
 public:
     Stack();
-    void push(double elem);
-    double pop(void);
-    double peek(void);
+    void push(Elem elem);
+    Elem pop(void);
+    Elem peek(void);
     bool is_empty(void);
     string dump(void);
 };
