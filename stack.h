@@ -1,15 +1,17 @@
 #pragma once
+
 #include <cstddef>
 #include <string>
 using namespace std;
 
-typedef double Elem;
+/* typedef double Elem; */
 
+template <typename Elem>
 class Node
 {
 private:
 public:
-    double value;
+    Elem value;
     Node *next;
 
     Node (void);
@@ -18,10 +20,11 @@ public:
 };
 
 
+template <typename Elem>
 class Stack
 {
 private:
-    Node *top;
+    Node<Elem> *top;
 
 public:
     Stack();
@@ -31,4 +34,6 @@ public:
     bool is_empty(void);
     string dump(void);
 };
+
+#include "stack.cpp"
 

@@ -21,7 +21,7 @@ void AppController::loop(void) {
 
         ok = sscanf(input.c_str(), " %lf", &num);
         if (ok != 0) {
-            rpn->enterNumber(num);
+            rpn->enter_number(num);
         } else if (ok != EOF) {
             sscanf(input.c_str(), " %c", &ch);
             switch (ch) {

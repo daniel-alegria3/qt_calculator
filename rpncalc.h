@@ -9,12 +9,12 @@ class RPNcalc
 {
 private:
 public:
-    Stack *stack;
+    Stack<double> *stack;
 
     RPNcalc(void);
-    bool getOperands(Op *op1, Op *op2);
-    bool getOperand(Op *op);
-    void enterNumber(Op num);
+    bool get_operands(Op *op1, Op *op2);
+    bool get_operand(Op *op);
+    void enter_number(Op num);
     void select_op_sum(void);
     void select_op_diff(void);
     void select_op_mul(void);

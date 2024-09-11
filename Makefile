@@ -1,17 +1,20 @@
-main: main.o appcontroller.o rpncalc.o stack.o
-	g++ $^ -o $@
+CC=g++ -Wall
+IDIRS= $$(pkg-config --cflags --libs Qt6Widgets) -fPIC
+
+main: main.o appcontroller.o rpncalc.o stack.h
+	$(CC) $(IDIRS) -o $@ $^
 
 main.o: main.cpp appcontroller.h
-	g++ -c $<
+	$(CC) $(IDIRS) -c $< -o $@
 
 appcontroller.o: appcontroller.cpp appcontroller.h rpncalc.h
-	g++ -c $<
+	$(CC) -c $< -o $@
 
 rpncalc.o: rpncalc.cpp rpncalc.h stack.h
-	g++ -c $<
+	$(CC) -c $< -o $@
 
-stack.o: stack.cpp stack.h
-	g++ -c $<
+# stack.o: stack.cpp stack.h
+# 	$(CC) -c stack.h -o $@
 
 clean:
 	rm -rf *.o main

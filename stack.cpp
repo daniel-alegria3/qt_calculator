@@ -1,44 +1,52 @@
-#include "stack.h"
 
-Node::Node (void) {}
+template <typename Elem>
+Node<Elem>::Node (void) {}
 
-Node::Node (Elem value, Node *next) {
+template <typename Elem>
+Node<Elem>::Node (Elem value, Node<Elem> *next) {
     this->value = value;
     this->next = next;
 }
 
-Node::Node (Node *next) {
+template <typename Elem>
+Node<Elem>::Node (Node<Elem> *next) {
     this->next = next;
 }
 
 
-Stack::Stack() {
-    this->top = new Node(NULL);
+template <typename Elem>
+Stack<Elem>::Stack() {
+    this->top = new Node<Elem>(NULL);
 }
 
-void Stack::push(Elem elem) {
-    top->next = new Node(elem, top->next);
+template <typename Elem>
+void Stack<Elem>::push(Elem elem) {
+    top->next = new Node<Elem>(elem, top->next);
 }
 
-Elem Stack::pop(void) {
-    Elem value = top->next->value;
-    Node *del = top->next;
-    top->next = top->next->next;
+template <typename Elem>
+Elem Stack<Elem>::pop(void) {
+    Node<Elem> *del = top->next;
+    Elem value = del->value;
+    top->next = del->next;
     free(del);
     return value;
 }
 
-Elem Stack::peek(void) {
+template <typename Elem>
+Elem Stack<Elem>::peek(void) {
     return top->next->value;
 }
 
-bool Stack::is_empty(void) {
+template <typename Elem>
+bool Stack<Elem>::is_empty(void) {
     return top->next == NULL;
 }
 
-string Stack::dump(void) {
+template <typename Elem>
+string Stack<Elem>::dump(void) {
     string text = "";
-    for (Node *n = top->next; n != NULL; n = n->next) {
+    for (Node<Elem> *n = top->next; n != NULL; n = n->next) {
         text += to_string(n->value) + "\n";
     }
     return text;

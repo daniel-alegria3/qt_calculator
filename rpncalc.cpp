@@ -5,10 +5,10 @@
 using namespace std;
 
 RPNcalc::RPNcalc (void) {
-    stack = new Stack();
+    stack = new Stack<double>();
 }
 
-bool RPNcalc::getOperands(Op *op1, Op *op2) {
+bool RPNcalc::get_operands(Op *op1, Op *op2) {
     if (stack->is_empty()) {
         cout << "Pila vacia! Ingrese un numero" << endl;
         return false;
@@ -25,7 +25,7 @@ bool RPNcalc::getOperands(Op *op1, Op *op2) {
     return true;
 }
 
-bool RPNcalc::getOperand(Op *op) {
+bool RPNcalc::get_operand(Op *op) {
     if (stack->is_empty()) {
         cout << "Pila vacia! Ingrese un numero" << endl;
         return false;
@@ -35,13 +35,13 @@ bool RPNcalc::getOperand(Op *op) {
     return true;
 }
 
-void RPNcalc::enterNumber(Op num) {
+void RPNcalc::enter_number(Op num) {
     stack->push(num);
 }
 
 void RPNcalc::select_op_sum(void) {
     Op op1, op2;
-    bool check = getOperands(&op1, &op2);
+    bool check = get_operands(&op1, &op2);
     if (!check) {
         return;
     }
@@ -50,7 +50,7 @@ void RPNcalc::select_op_sum(void) {
 
 void RPNcalc::select_op_diff(void) {
     Op op1, op2;
-    bool check = getOperands(&op1, &op2);
+    bool check = get_operands(&op1, &op2);
     if (!check) {
         return;
     }
@@ -59,7 +59,7 @@ void RPNcalc::select_op_diff(void) {
 
 void RPNcalc::select_op_mul(void) {
     Op op1, op2;
-    bool check = getOperands(&op1, &op2);
+    bool check = get_operands(&op1, &op2);
     if (!check) {
         return;
     }
@@ -68,7 +68,7 @@ void RPNcalc::select_op_mul(void) {
 
 void RPNcalc::select_op_pow(void) {
     Op op1, op2;
-    bool check = getOperands(&op1, &op2);
+    bool check = get_operands(&op1, &op2);
     if (!check) {
         return;
     }
@@ -82,7 +82,7 @@ void RPNcalc::select_op_pow(void) {
 
 void RPNcalc::select_op_div(void) {
     Op op1, op2;
-    bool check = getOperands(&op1, &op2);
+    bool check = get_operands(&op1, &op2);
     if (!check) {
         return;
     }
@@ -91,7 +91,7 @@ void RPNcalc::select_op_div(void) {
 
 void RPNcalc::select_op_sqrt(void) {
     Op op;
-    bool check = getOperand(&op);
+    bool check = get_operand(&op);
     if (!check) {
         return;
     }
