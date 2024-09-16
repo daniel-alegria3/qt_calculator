@@ -44,6 +44,17 @@ bool Stack<Elem>::is_empty(void) {
 }
 
 template <typename Elem>
+void Stack<Elem>::empty(void) {
+    Node<Elem> *temp = top->next;
+    Node<Elem> *del;
+    while ((del = temp) != NULL) {
+        temp = del->next;
+        free(del);
+    }
+    top->next = NULL;
+}
+
+template <typename Elem>
 string Stack<Elem>::dump(void) {
     string text = "";
     for (Node<Elem> *n = top->next; n != NULL; n = n->next) {

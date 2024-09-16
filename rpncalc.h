@@ -2,24 +2,18 @@
 #include <cstddef>
 #include <string>
 #include "stack.h"
+#include "rpn.h"
 
-typedef double Op;
+/* typedef double double; */
 
 class RPNcalc
 {
 private:
 public:
+    RPN *rpn;
     Stack<double> *stack;
 
     RPNcalc(void);
-    bool get_operands(Op *op1, Op *op2);
-    bool get_operand(Op *op);
-    void enter_number(Op num);
-    void select_op_sum(void);
-    void select_op_diff(void);
-    void select_op_mul(void);
-    void select_op_pow(void);
-    void select_op_div(void);
-    void select_op_sqrt(void);
+    string solve(string expresion);
 };
 

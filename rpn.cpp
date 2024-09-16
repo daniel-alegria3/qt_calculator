@@ -1,67 +1,15 @@
+#include <stdlib.h>
 #include "stack.h"
+#include "rpn.h"
 
 #include <stdio.h>
-#include <vector>
 
-////////////////////////////////////////////////////////////////////////////////
-/// both SYMB_NONE and TYPE_NONE need to be less than 0
-enum GROUPING_SYMB {
-    PHARENTHESIS,
-    BRACE,
-    BRACKET,
-    SYMB_NONE = -1,
-};
-enum GROUPING_TYPE {
-    OPENING,
-    CLOSING,
-    TYPE_NONE = -1,
-};
-const string opening[] = {
-    [PHARENTHESIS] = "(",
-    [BRACE] = "[",
-    [BRACKET] = "{",
-};
-const string closing[] = {
-    [PHARENTHESIS] = ")",
-    [BRACE] = "]",
-    [BRACKET] = "}",
-};
+RPN::RPN(void)
+{
+    operand_stack = new Stack<double>();
+}
 
-enum OPERATION {
-    SUM,
-    SUB,
-    MUL,
-    DIV,
-    POW,
-    SQRT,
-    OPERATION_NONE = -1,
-};
-const string operation[] = {
-    [SUM] = "+",
-    [SUB] = "-",
-    [MUL] = "*",
-    [DIV] = "/",
-    [POW] = "^",
-    [SQRT] = "sqrt",
-};
-const int precedence[] = {
-    [SUM] = 3,
-    [SUB] = 3,
-    [MUL] = 2,
-    [DIV] = 2,
-    [POW] = 1,
-    [SQRT] = 1,
-};
-
-static void get_grouping_symb_and_type(
-    const string s,
-    enum GROUPING_SYMB* name,
-    enum GROUPING_TYPE* type);
-static int get_precedence(const string s);
-vector<string> split(const string s, const string delimiter);
-///////////////////////////////////////////////////////////////////////////////
-
-string infix_to_postfix(string expresion)
+string RPN::infix_to_postfix(string expresion)
 {
     Stack<string> *stack = new Stack<string>();
 
@@ -69,19 +17,20 @@ string infix_to_postfix(string expresion)
     vector<string> infix = split(expresion, " ");
     string output = "";
 
-    enum GROUPING_SYMB symb, sy;
-    enum GROUPING_TYPE type, ty;
+    string type, ope, clo;
+    string ty;
+
     for (int i = 0; i < infix.size(); ++i) {
         string s = infix[i];
         if (s == "") {
             continue;
         }
 
-        get_grouping_symb_and_type(s, &symb, &type);
+        type = get_opening_and_closing(s, &ope, &clo);
 
         // printf("%s\n", s.c_str());
 
-        if ( s == operation[SQRT] ) { // solucion temporal a operaciones unarias
+        if ( is_unary_op(s) ) { // solucion temporal a operaciones unarias
             stack->push(s);
         } else
 
@@ -94,14 +43,14 @@ string infix_to_postfix(string expresion)
             }
             stack->push(s);
 
-        } else if (type == OPENING) { // (, [, {
+        } else if (type == "OPENING") { // (, [, {
             stack->push(s);
 
-        } else if (type == CLOSING) { // ), ], }
-            while (!stack->is_empty() && stack->peek() != opening[symb]) {
+        } else if (type == "CLOSING") { // ), ], }
+            while (!stack->is_empty() && stack->peek() != ope) {
                 string top = stack->pop();
-                get_grouping_symb_and_type(top, &sy, &ty);
-                if (ty != OPENING) {
+                ty = get_grouping_type(top);
+                if (ty != "OPENING") {
                     output += top + " ";
                 }
             }
@@ -121,41 +70,145 @@ string infix_to_postfix(string expresion)
     return output;
 }
 
-static void get_grouping_symb_and_type(
-    const string s,
-    enum GROUPING_SYMB* symb,
-    enum GROUPING_TYPE* type)
+string RPN::eval_postfix(string expresion)
 {
-    *symb = SYMB_NONE;
-    *type = TYPE_NONE;
+    operand_stack->empty();
 
-    int len = sizeof(opening) / sizeof(opening[0]);
-    for (int i = 0; i < len; ++i) {
-        if (s == opening[i]) {
-            *symb = (enum GROUPING_SYMB)i;
-            *type = OPENING;
-            return;
+    // expresion = expresion.trim();
+    vector<string> postfix = split(expresion, " ");
+
+    double op1, op2;
+    Operation *op;
+    for (int i = 0; i < postfix.size(); ++i) {
+        string s = postfix[i];
+        if (s == "") {
+            continue;
         }
-        if (s == closing[i]) {
-            *symb = (enum GROUPING_SYMB)i;
-            *type = CLOSING;
-            return;
+
+        op = get_operation(s);
+
+        if (op == NULL) {
+            operand_stack->push(stof(s));
+
+        } else if (op->type == BINARY) {
+            if (operand_stack->is_empty()) {
+                return "ERROR: Tried to pop empty stack";
+            };
+            op2 = operand_stack->pop();
+
+            if (operand_stack->is_empty()) {
+                return "ERROR: Tried to pop empty stack";
+            };
+            op1 = operand_stack->pop();
+
+            operand_stack->push(op->func(op1, op2));
+
+        } else if (op->type == UNARY) {
+            if (operand_stack->is_empty()) {
+                return "ERROR: Tried to pop empty stack";
+            };
+            op1 = operand_stack->pop();
+
+            operand_stack->push(op->func(op1, 0)); // TODO: fix unary functions
+                                                   // being defined with two
+         } else if (op->type == FUNCTION) {
+             // TODO
         }
     }
+
+    return to_string(operand_stack->peek());
 }
 
-static int get_precedence(const string s)
+void RPN::add_grouping(string opening, string closing)
 {
-    int len = sizeof(operation) / sizeof(operation[0]);
-    for (int i = 0; i < len; ++i) {
-        if (s == operation[i]) {
-            return precedence[i];
+    Grouping gr = {.opening = opening, .closing = closing};
+    groupings.push_back(gr);
+}
+
+void RPN::add_operation(string symbol, int precedence, enum OpType type,
+                   double (*func)(double a, double b))
+{
+    Operation op = {
+        .symbol = symbol,
+        .precedence = precedence,
+        .type = type,
+        .func = func,
+    };
+    operations.push_back(op);
+}
+
+
+string RPN::get_grouping_type(const string s)
+{
+    Grouping *gr;
+    for (int i = 0; i < groupings.size(); ++i) {
+        gr = &groupings[i];
+        if (s == gr->opening) {
+            return "OPENING";
+        }
+        if (s == gr->closing) {
+            return "CLOSING";
+        }
+    }
+    return "NONE";
+}
+
+string RPN::get_opening_and_closing(const string s, string *opening, string *closing)
+{
+    Grouping *gr;
+    for (int i = 0; i < groupings.size(); ++i) {
+        gr = &groupings[i];
+        if (s == gr->opening) {
+            *opening = s;
+            *closing = gr->closing;
+            return "OPENING";
+        }
+        if (s == gr->closing) {
+            *closing = s;
+            *opening = gr->opening;
+            return "CLOSING";
+        }
+    }
+    return "NONE";
+}
+
+Operation *RPN::get_operation(const string s)
+{
+    Operation *op;
+    for (int i = 0; i < operations.size(); ++i) {
+        op = &operations[i];
+        if (s == op->symbol) {
+            return op;
+        }
+    }
+    return NULL;
+}
+
+int RPN::get_precedence(const string s)
+{
+    Operation *op;
+    for (int i = 0; i < operations.size(); ++i) {
+        op = &operations[i];
+        if (s == op->symbol) {
+            return op->precedence;
         }
     }
     return -1;
 }
 
-vector<string> split(const string s, const string delimiter)
+bool RPN::is_unary_op(const string s)
+{
+    Operation *op;
+    for (int i = 0; i < operations.size(); ++i) {
+        op = &operations[i];
+        if (s == op->symbol && op->type == UNARY) {
+            return true;
+        }
+    }
+    return false;
+}
+
+vector<string> RPN::split(const string s, const string delimiter)
 {
 
     vector<string> tokens;
@@ -171,42 +224,5 @@ vector<string> split(const string s, const string delimiter)
     tokens.push_back(token);
 
     return tokens;
-}
-
-void print_check(string s) {
-    printf("%s\n", s.c_str());
-    printf("%s\n", infix_to_postfix(s).c_str());
-}
-
-int main(void)
-{
-    string s0 = "( 2 + 5 ) * 3 + 1";
-    string s1 = "2 + 5 * 3 + 1";
-    string s2 = "{ ( 2 + 3 ) * 5 ^ ( 3 - 1 ) }";
-    string s3 = "{ ( 2 + 3 ) * 5 ^ ( 2 + 1 ) - [ 4 * 5 - ( 2 - 1 ) ] }";
-
-    string s4 = "{ ( 2 + 3 ) * 5 ^ ( 3 - 1 ) }";
-    string s5 = "{ ( 2 + 3 ) * sqrt ( 3 - 1 ) }";
-
-    printf("---------------------------------\n");
-    print_check(s0);
-
-    printf("---------------------------------\n");
-    print_check(s1);
-
-    printf("---------------------------------\n");
-    print_check(s2);
-
-    printf("---------------------------------\n");
-    print_check(s3);
-
-    printf("---------------------------------\n");
-    printf("---------------------------------\n");
-    print_check(s4);
-
-    printf("---------------------------------\n");
-    print_check(s5);
-
-    return 0;
 }
 

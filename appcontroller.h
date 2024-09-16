@@ -9,7 +9,7 @@ class AppController
 {
 private:
 public:
-    RPNcalc *rpn = new RPNcalc();
+    RPNcalc *rpnc = new RPNcalc();
 
     AppController(void);
     void loop(void);

@@ -77,20 +77,20 @@ static void get_grouping_name_and_type(
     }
 }
 
-void print_check(const char *str) {
-    printf("%d\n", is_correct_parentesis(str));
-}
-
-int main (int argc, char *argv[]) {
-    print_check("(1)");
-    print_check("([{2+3}-4]/2)^2");
-    print_check("{[2+6*(75+11-4)]}*[5-(2-1)]");
-    print_check("{[2+10*(15+16-4)]}*[5-(2-1)+9]");
-
-    print_check("(5+4)+3)");
-    print_check("((12+7*[35+14-3]*(5-(2-1)");
-    print_check("((21+3*[52+7*4)*(5-(2-1}+4");
-    print_check("((21+2*[7*6)*(5-(2-1}+2(");
-
-    return 0;
-}
+// void print_check(const char *str) {
+//     printf("%d\n", is_correct_parentesis(str));
+// }
+//
+// int main (void) {
+//     print_check("(1)");
+//     print_check("([{2+3}-4]/2)^2");
+//     print_check("{[2+6*(75+11-4)]}*[5-(2-1)]");
+//     print_check("{[2+10*(15+16-4)]}*[5-(2-1)+9]");
+//
+//     print_check("(5+4)+3)");
+//     print_check("((12+7*[35+14-3]*(5-(2-1)");
+//     print_check("((21+3*[52+7*4)*(5-(2-1}+4");
+//     print_check("((21+2*[7*6)*(5-(2-1}+2(");
+//
+//     return 0;
+// }

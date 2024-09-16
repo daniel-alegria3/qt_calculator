@@ -1,100 +1,46 @@
-#include <iostream>
 #include <cmath>
+#include <cstdlib>
 #include "rpncalc.h"
 
 using namespace std;
 
+double op_sum(double a, double b);
+double op_diff(double a, double b);
+double op_mul(double a, double b);
+double op_pow(double a, double b);
+double op_div(double a, double b);
+double op_sqrt(double a, double b);
+
 RPNcalc::RPNcalc (void) {
-    stack = new Stack<double>();
+    rpn = new RPN();
+
+    rpn->add_grouping("(", ")");
+    rpn->add_grouping("[", "]");
+    rpn->add_grouping("{", "}");
+
+    rpn->add_operation("sqrt", 1, UNARY, &op_sqrt);
+    rpn->add_operation("^", 1, BINARY, &op_pow);
+    rpn->add_operation("/", 2, BINARY, &op_div);
+    rpn->add_operation("*", 2, BINARY, &op_mul);
+    rpn->add_operation("-", 3, BINARY, &op_diff);
+    rpn->add_operation("+", 3, BINARY, &op_sum);
 }
 
-bool RPNcalc::get_operands(Op *op1, Op *op2) {
-    if (stack->is_empty()) {
-        cout << "Pila vacia! Ingrese un numero" << endl;
-        return false;
+string RPNcalc::solve(string expresion) {
+    return rpn->eval_postfix(rpn->infix_to_postfix(expresion));
+}
+
+double op_sum(double a, double b) { return a + b; }
+double op_diff(double a, double b) { return a - b; }
+double op_mul(double a, double b) { return a * b; }
+double op_pow(double a, double b) {
+    int n = (int) b;
+    double r = 1;
+    while (n-- > 0) {
+        r *= a;
     }
-    *op2 = stack->pop();
-
-    if (stack->is_empty()) {
-        cout << "Se requiere dos numeros!" << endl;
-        stack->push(*op2);
-        return false;
-    }
-    *op1 = stack->pop();
-
-    return true;
+    return r;
 }
-
-bool RPNcalc::get_operand(Op *op) {
-    if (stack->is_empty()) {
-        cout << "Pila vacia! Ingrese un numero" << endl;
-        return false;
-    }
-    *op = stack->pop();
-
-    return true;
-}
-
-void RPNcalc::enter_number(Op num) {
-    stack->push(num);
-}
-
-void RPNcalc::select_op_sum(void) {
-    Op op1, op2;
-    bool check = get_operands(&op1, &op2);
-    if (!check) {
-        return;
-    }
-    stack->push(op1+op2);
-}
-
-void RPNcalc::select_op_diff(void) {
-    Op op1, op2;
-    bool check = get_operands(&op1, &op2);
-    if (!check) {
-        return;
-    }
-    stack->push(op1-op2);
-}
-
-void RPNcalc::select_op_mul(void) {
-    Op op1, op2;
-    bool check = get_operands(&op1, &op2);
-    if (!check) {
-        return;
-    }
-    stack->push(op1*op2);
-}
-
-void RPNcalc::select_op_pow(void) {
-    Op op1, op2;
-    bool check = get_operands(&op1, &op2);
-    if (!check) {
-        return;
-    }
-    // Op res = 1;
-    // int n = op2;
-    // for (int i = 0; i < n; ++i) {
-    //     res *= op1;
-    // }
-    stack->push(pow(op1,op2));
-}
-
-void RPNcalc::select_op_div(void) {
-    Op op1, op2;
-    bool check = get_operands(&op1, &op2);
-    if (!check) {
-        return;
-    }
-    stack->push(op1/op2);
-}
-
-void RPNcalc::select_op_sqrt(void) {
-    Op op;
-    bool check = get_operand(&op);
-    if (!check) {
-        return;
-    }
-    stack->push(sqrt(op));
-}
+double op_div(double a, double b) { return a - b; }
+double op_sqrt(double a, double b) { return sqrt(a); }
 

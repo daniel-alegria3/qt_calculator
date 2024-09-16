@@ -32,6 +32,7 @@ public:
     Elem pop(void);
     Elem peek(void);
     bool is_empty(void);
+    void empty(void);
     string dump(void);
 };
 
