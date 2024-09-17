@@ -1,3 +1,4 @@
+#include <cmath>
 #include <stdlib.h>
 #include "stack.h"
 #include "rpn.h"
@@ -17,16 +18,16 @@ string RPN::infix_to_postfix(string expresion)
     vector<string> infix = split(expresion, " ");
     string output = "";
 
-    string type, ope, clo;
+    string type, opposite;
     string ty;
 
-    for (int i = 0; i < infix.size(); ++i) {
+    for (size_t i = 0; i < infix.size(); ++i) {
         string s = infix[i];
         if (s == "") {
             continue;
         }
 
-        type = get_opening_and_closing(s, &ope, &clo);
+        type = get_grouping_type_and_opposite(s, &opposite);
 
         // printf("%s\n", s.c_str());
 
@@ -47,7 +48,7 @@ string RPN::infix_to_postfix(string expresion)
             stack->push(s);
 
         } else if (type == "CLOSING") { // ), ], }
-            while (!stack->is_empty() && stack->peek() != ope) {
+            while (!stack->is_empty() && stack->peek() != opposite) {
                 string top = stack->pop();
                 ty = get_grouping_type(top);
                 if (ty != "OPENING") {
@@ -79,7 +80,7 @@ string RPN::eval_postfix(string expresion)
 
     double op1, op2;
     Operation *op;
-    for (int i = 0; i < postfix.size(); ++i) {
+    for (size_t i = 0; i < postfix.size(); ++i) {
         string s = postfix[i];
         if (s == "") {
             continue;
@@ -119,6 +120,35 @@ string RPN::eval_postfix(string expresion)
     return to_string(operand_stack->peek());
 }
 
+bool RPN::is_correct_parenthesis(string expresion) {
+    Stack<string> *stack = new Stack<string>();
+
+    // expresion = expresion.trim();
+    vector<string> parenthesis = split(expresion, " ");
+
+    string s;
+    string type, opposite;
+    for (size_t i = 0; i < parenthesis.size(); ++i) {
+        s = parenthesis[i];
+        if (s == "") {
+            continue;
+        }
+        type = get_grouping_type_and_opposite(s, &opposite);
+        if (type == "OPENING") {
+            stack->push(s);
+        } else if (type == "CLOSING" && (stack->is_empty() || stack->pop() != opposite)) {
+            return false;
+        }
+    }
+
+    if (stack->is_empty()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 void RPN::add_grouping(string opening, string closing)
 {
     Grouping gr = {.opening = opening, .closing = closing};
@@ -141,7 +171,7 @@ void RPN::add_operation(string symbol, int precedence, enum OpType type,
 string RPN::get_grouping_type(const string s)
 {
     Grouping *gr;
-    for (int i = 0; i < groupings.size(); ++i) {
+    for (size_t i = 0; i < groupings.size(); ++i) {
         gr = &groupings[i];
         if (s == gr->opening) {
             return "OPENING";
@@ -153,19 +183,17 @@ string RPN::get_grouping_type(const string s)
     return "NONE";
 }
 
-string RPN::get_opening_and_closing(const string s, string *opening, string *closing)
+string RPN::get_grouping_type_and_opposite(const string s, string *opposite)
 {
     Grouping *gr;
-    for (int i = 0; i < groupings.size(); ++i) {
+    for (size_t i = 0; i < groupings.size(); ++i) {
         gr = &groupings[i];
         if (s == gr->opening) {
-            *opening = s;
-            *closing = gr->closing;
+            *opposite = gr->closing;
             return "OPENING";
         }
         if (s == gr->closing) {
-            *closing = s;
-            *opening = gr->opening;
+            *opposite = gr->opening;
             return "CLOSING";
         }
     }
@@ -175,7 +203,7 @@ string RPN::get_opening_and_closing(const string s, string *opening, string *clo
 Operation *RPN::get_operation(const string s)
 {
     Operation *op;
-    for (int i = 0; i < operations.size(); ++i) {
+    for (size_t i = 0; i < operations.size(); ++i) {
         op = &operations[i];
         if (s == op->symbol) {
             return op;
@@ -187,7 +215,7 @@ Operation *RPN::get_operation(const string s)
 int RPN::get_precedence(const string s)
 {
     Operation *op;
-    for (int i = 0; i < operations.size(); ++i) {
+    for (size_t i = 0; i < operations.size(); ++i) {
         op = &operations[i];
         if (s == op->symbol) {
             return op->precedence;
@@ -199,7 +227,7 @@ int RPN::get_precedence(const string s)
 bool RPN::is_unary_op(const string s)
 {
     Operation *op;
-    for (int i = 0; i < operations.size(); ++i) {
+    for (size_t i = 0; i < operations.size(); ++i) {
         op = &operations[i];
         if (s == op->symbol && op->type == UNARY) {
             return true;

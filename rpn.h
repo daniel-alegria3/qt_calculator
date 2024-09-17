@@ -29,13 +29,15 @@ class RPN
         vector<Grouping> groupings;
 
         string get_grouping_type(const string s);
-        string get_opening_and_closing(const string s, string *opening, string *closing);
+        string get_grouping_type_and_opposite(const string s, string *opposite);
+        /* bool is_correct_parenthesis(string expresion); */
         Operation *get_operation(const string s);
         int get_precedence(const string s);
         bool is_unary_op(const string s);
         vector<string> split(const string s, const string delimiter);
 
     public:
+        bool is_correct_parenthesis(string expresion);
         Stack<double> *operand_stack;
 
         RPN(void);
