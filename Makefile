@@ -1,26 +1,36 @@
-CC=g++ -Wall
-IDIRS= $$(pkg-config --cflags --libs Qt6Widgets) -fPIC
+SRC=src
+OBJ=obj
+INC=include
+TEST=test
 
-main: main.o appcontroller.o rpncalc.o rpn.o stack.h
+CC=g++ -Wall -I$(INC)
+# IDIRS= $$(pkg-config --cflags --libs Qt6Widgets) -fPIC
+OBJS=main.o appcontroller.o rpncalc.o rpn.o undoredo.o
+OBJSS=${OBJS:%=$(OBJ)/%}
+
+main: $(OBJSS)
 	$(CC) $(IDIRS) -o $@ $^
 
-main.o: main.cpp appcontroller.h
+$(OBJ)/main.o: $(SRC)/main.cpp $(INC)/appcontroller.h
 	$(CC) $(IDIRS) -c $< -o $@
 
-appcontroller.o: appcontroller.cpp appcontroller.h rpncalc.h
+$(OBJ)/appcontroller.o: $(SRC)/appcontroller.cpp $(INC)/appcontroller.h $(INC)/rpncalc.h
 	$(CC) -c $< -o $@
 
-rpncalc.o: rpncalc.cpp rpncalc.h stack.h
+$(OBJ)/rpncalc.o: $(SRC)/rpncalc.cpp $(INC)/rpncalc.h $(INC)/stack.h
 	$(CC) -c $< -o $@
 
-rpn.o: rpn.cpp rpn.h stack.h
+$(OBJ)/rpn.o: $(SRC)/rpn.cpp $(INC)/rpn.h $(INC)/stack.h
+	$(CC) -c $< -o $@
+
+$(OBJ)/undoredo.o: $(SRC)/undoredo.cpp $(INC)/stack.h
 	$(CC) -c $< -o $@
 
 # stack.o: stack.cpp stack.h
 # 	$(CC) -c stack.h -o $@
 
 clean:
-	rm -rf *.o main
+	rm -rf main *.o *.gch obj/*
 
 .PHONY: clean
 
