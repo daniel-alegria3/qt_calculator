@@ -112,8 +112,8 @@ string RPN::eval_postfix(string expresion)
 
             operand_stack->push(op->func(op1, 0)); // TODO: fix unary functions
                                                    // being defined with two
-         } else if (op->type == FUNCTION) {
-             // TODO
+        } else if (op->type == FUNCTION) {
+            op->func(0, 0);
         }
     }
 

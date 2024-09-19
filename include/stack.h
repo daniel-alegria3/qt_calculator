@@ -34,6 +34,8 @@ public:
     bool is_empty(void);
     void empty(void);
     string dump(void);
+    size_t length(void);
+    Elem get(size_t index);
 };
 
 /* #include "stack.cpp" */
@@ -100,5 +102,32 @@ string Stack<Elem>::dump(void) {
         text += to_string(n->value) + "\n";
     }
     return text;
+}
+
+template <typename Elem>
+size_t Stack<Elem>::length(void)
+{
+    Node<Elem> *node = top->next;
+    size_t count = 0;
+    while (node != NULL) {
+        ++count;
+        node = node->next;
+    }
+    return count;
+}
+
+template <typename Elem>
+Elem Stack<Elem>::get(size_t index)
+{
+    if ( index >= length()) {
+        // errno = ?
+        return 0;
+    }
+
+    Node<Elem> *n = top->next;
+    while ( n != NULL && index-- > 0) {
+        n = n->next;
+    }
+    return n->value;
 }
 
