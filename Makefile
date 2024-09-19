@@ -5,10 +5,10 @@ TEST=test
 
 CC=g++ -Wall -I$(INC)
 # IDIRS= $$(pkg-config --cflags --libs Qt6Widgets) -fPIC
-OBJS=main.o appcontroller.o rpncalc.o rpn.o
-OBJSS=${OBJS:%=$(OBJ)/%}
+_OBJS=main.o appcontroller.o rpncalc.o rpn.o
+OBJS=${_OBJS:%=$(OBJ)/%}
 
-main: $(OBJSS)
+main: $(OBJS)
 	$(CC) $(IDIRS) -o $@ $^
 
 $(OBJ)/main.o: $(SRC)/main.cpp $(INC)/appcontroller.h
