@@ -1,6 +1,6 @@
 #include <cmath>
 #include <cstdlib>
-#include "rpncalc.h"
+#include "rpn/rpncalc.h"
 
 using namespace std;
 

@@ -1,7 +1,7 @@
 #include <cmath>
 #include <stdlib.h>
-#include "stack.h"
-#include "rpn.h"
+#include "rpn/stack.h"
+#include "rpn/rpn.h"
 
 #include <stdio.h>
 

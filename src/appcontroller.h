@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <string>
-#include "rpncalc.h"
+#include "rpn/rpncalc.h"
 
 typedef double Op;
 
