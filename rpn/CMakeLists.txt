@@ -7,7 +7,6 @@ project(rpn VERSION 0.0.1 LANGUAGES CXX)
 # find_package(Vulkan REQUIRED)
 
 ## add external libraries
-# add_subdirectory(external/glm)
 # add_subdirectory(external/glfw)
 # add_subdirectory(external/SDL)
 # add_subdirectory(external/assimp)
@@ -21,7 +20,6 @@ target_sources(${PROJECT_NAME}
         src/stack.cpp
         src/undoredo.cpp
 )
-
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         $<INSTALL_INTERFACE:include>
@@ -29,9 +27,10 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
     SYSTEM
 )
-
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
     PRIVATE
 )
 
+enable_testing()
+add_subdirectory(tests)

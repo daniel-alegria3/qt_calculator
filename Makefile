@@ -1,9 +1,16 @@
-run: build
+run: build test
 	./build/calculator
 
-build:
-	cmake . -B./build -G Ninja
-	cmake --build ./build
+test: build
+	ctest --test-dir build/rpn --output-on-failure
 
-.PHONY: run build
+
+build:
+	cmake . -B build -G Ninja
+	cmake --build build
+
+clean:
+	rm -rf build
+
+.PHONY: build run test clean
 

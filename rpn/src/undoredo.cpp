@@ -19,7 +19,6 @@ bool UndoRedo::undo(void)
         redos->push(x);
         return true;
     }
-    cout << "undo: (pila 'undos' vacia)" << endl;
     return false;
 }
 
@@ -30,14 +29,13 @@ bool UndoRedo::redo(void)
         undos->push(x);
         return true;
     }
-    cout << "redo: (pila 'redos' vacia)" << endl;
     return false;
 }
 
 string UndoRedo::show(void)
 {
     string values = "";
-    for (int i = 0; i < undos->length(); ++i) {
+    for (int i = undos->length()-1; i >= 0 ; --i) {
         values += undos->get(i);
     }
     return values;
@@ -49,15 +47,12 @@ string UndoRedo::simulate(vector<string> op)
     for (int i = 0; i < n; ++i) {
         if (op[i] == "UNDO") {
             if (undo()) {
-                cout << "undo: " << show() << endl;
             }
         } else if (op[i] == "REDO") {
             if (redo()) {
-                cout << "redo: " << show() << endl;
             }
         } else {
             input_char(op[i][0]);
-            cout << "inserta: " << show() << endl;
         }
     }
     return show();
