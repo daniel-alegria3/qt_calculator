@@ -6,6 +6,8 @@
 #include "rpn/rpn.h"
 
 using namespace std;
+using Catch::Matchers::WithinRel;
+using Catch::Matchers::WithinAbs;
 
 double sum(double a, double b) { return a + b; }
 double diff(double a, double b) { return a - b; }
@@ -75,9 +77,7 @@ TEST_CASE("RPN can eval infix expression", "[rpn]") {
     pos = rpn->infix_to_postfix(s);
     eva = rpn->eval_postfix(pos);
     CHECK(pos == "2 3 + 3 1 - sqrt * ");
-    CHECK_THAT(stof(eva),
-        Catch::Matchers::WithinRel(7.071, 0.001)
-        || Catch::Matchers::WithinAbs(0, 0.000001)
+    CHECK_THAT(stof(eva), WithinRel(7.071, 0.001) || WithinAbs(0, 0.000001)
     );
 }
 
@@ -88,10 +88,7 @@ TEST_CASE("RPN can eval postfix expression", "[rpn]") {
 
     pos = "2.4 52 + 3 - 1.5 +";
     eva = rpn->eval_postfix(pos);
-    CHECK_THAT(stof(eva),
-        Catch::Matchers::WithinRel(52.9, 0.001)
-        || Catch::Matchers::WithinAbs(0, 0.000001)
-    );
+    CHECK_THAT(stof(eva), WithinRel(52.9, 0.001) || WithinAbs(0, 0.000001));
 
     pos = "2 50 3 - + 10 +";
     eva = rpn->eval_postfix(pos);
@@ -103,11 +100,9 @@ TEST_CASE("RPN can eval postfix expression", "[rpn]") {
 
     pos = "25 3.5 + 50 2 15 + - + 40 50 - 25 15 - - -";
     eva = rpn->eval_postfix(pos);
-    CHECK_THAT(stof(eva),
-        Catch::Matchers::WithinRel(81.5, 0.001)
-        || Catch::Matchers::WithinAbs(0, 0.000001)
-    );
+    CHECK_THAT(stof(eva), WithinRel(81.5, 0.001) || WithinAbs(0, 0.000001));
 }
+
 
 TEST_CASE("RPN can eval infix expression, checking parenthesis", "[rpn]") {
     init_rpn();
