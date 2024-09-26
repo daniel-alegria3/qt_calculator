@@ -26,7 +26,8 @@ double _sqrt(double a, double b) { return sqrt(a); }
 
 RPN *rpn;
 void init_rpn(void) {
-    rpn = new RPN(); rpn->add_grouping("(", ")");
+    rpn = new RPN();
+    rpn->add_grouping("(", ")");
     rpn->add_grouping("[", "]");
     rpn->add_grouping("{", "}");
 

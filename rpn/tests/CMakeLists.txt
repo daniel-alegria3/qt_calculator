@@ -7,9 +7,15 @@ find_package(Catch2 REQUIRED)
 
 add_executable(
     tests
-    test_rpn.cpp
+    unittest_funciones.cpp
+    unittest_parenthesis.cpp
+    unittest_convertir_postfija.cpp
+    unittest_evaluar_postfija.cpp
+    unittest_undoredo.cpp
+
+    # test_rpn.cpp
+    # test_undoredo.cpp
     ../src/rpn.cpp
-    test_undoredo.cpp
     ../src/undoredo.cpp
 )
 target_include_directories(tests PUBLIC ../include)

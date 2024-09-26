@@ -32,6 +32,12 @@ bool UndoRedo::redo(void)
     return false;
 }
 
+void UndoRedo::empty(void)
+{
+    undos->empty();
+    redos->empty();
+}
+
 string UndoRedo::show(void)
 {
     string values = "";

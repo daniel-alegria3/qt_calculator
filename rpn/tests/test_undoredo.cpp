@@ -11,6 +11,7 @@ TEST_CASE("Undoredo works", "[undoredo]") {
     vector<string> vec;
     string res;
 
+    ur->empty();
     vec = {
         "(","1","+","2",")",
         "UNDO","UNDO","UNDO","UNDO","UNDO","UNDO","UNDO",
@@ -19,6 +20,7 @@ TEST_CASE("Undoredo works", "[undoredo]") {
     res = ur->simulate(vec);
     CHECK(res == "(1+2)");
 
+    ur->empty();
     vec = {
         "{","4","+","(","5","+","6",")","-","3","*","5",
         "UNDO","UNDO",
@@ -27,8 +29,9 @@ TEST_CASE("Undoredo works", "[undoredo]") {
         "10",
     };
     res = ur->simulate(vec);
-    CHECK(res == "(1+2){4+(5+6)-3^4}-5*1");
+    CHECK(res == "{4+(5+6)-3^4}-5*1");
 
+    ur->empty();
     vec = {
         "(","7","*","3",")","-","4",
         "UNDO","UNDO","UNDO","REDO","REDO",
@@ -36,8 +39,9 @@ TEST_CASE("Undoredo works", "[undoredo]") {
         "UNDO","UNDO","REDO"
     };
     res = ur->simulate(vec);
-    CHECK(res == "(1+2){4+(5+6)-3^4}-5*1(7*3)-+(2*(3+1)");
+    CHECK(res == "(7*3)-+(2*(3+1)");
 
+    ur->empty();
     vec = {
         "{","9","+","2","-","(","8","/","4",")",
         "UNDO","UNDO",
@@ -46,8 +50,9 @@ TEST_CASE("Undoredo works", "[undoredo]") {
         "+","5","}"
     };
     res = ur->simulate(vec);
-    CHECK(res == "(1+2){4+(5+6)-3^4}-5*1(7*3)-+(2*(3+1){9+2-(8/*(6-1)/+5}");
+    CHECK(res == "{9+2-(8/*(6-1)/+5}");
 
+    ur->empty();
     vec = {
         "(","10","+","3",")","*","5",
         "UNDO","UNDO",
@@ -57,6 +62,6 @@ TEST_CASE("Undoredo works", "[undoredo]") {
         "REDO","UNDO"
     };
     res = ur->simulate(vec);
-    CHECK(res == "(1+2){4+(5+6)-3^4}-5*1(7*3)-+(2*(3+1){9+2-(8/*(6-1)/+5}(1+3)-(4/2)*+7*(5+2");
+    CHECK(res == "(1+3)-(4/2)*+7*(5+2");
 }
 

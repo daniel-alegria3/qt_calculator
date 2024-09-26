@@ -18,6 +18,7 @@ public:
     void input_char(char c);
     bool undo(void);
     bool redo(void);
+    void empty(void);
     string show(void);
     string simulate(vector<string> op);
 };
