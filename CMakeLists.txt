@@ -1,17 +1,30 @@
 cmake_minimum_required(VERSION 3.5)
 project(calculator VERSION 0.0.1 LANGUAGES CXX)
 
+set(CMAKE_AUTOMOC ON)   # Enables automatic moc processing
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 # set(CMAKE_CXX_STANDARD 20)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Gui Core)
-# qt_standard_project_setup()
 
 add_subdirectory(rpn)
 
-add_executable(${PROJECT_NAME} src/main.cpp src/appcontroller.cpp)
-# qt_add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME}
+    src/main.cpp
+    src/appcontroller.cpp
+    src/appview.cpp
+)
 
-target_include_directories(${PROJECT_NAME} PRIVATE rpn)
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        rpn
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         rpn

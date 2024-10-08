@@ -1,31 +1,40 @@
-#include <iostream>
-#include <stdexcept>
-#include "appcontroller.h"
+#include <QApplication>
+#include <QDebug>
 
-using namespace std;
+#include "appcontroller.h"
+#include "appview.h"
+//#include "rpn/rpncalc.h"
+
+#define WIN_WIDTH 400
+#define WIN_HEIGHT 500
 
 AppController::AppController (void) {
-    rpnc = new RPNcalc();
+    //rpnc = new RPNcalc();
 }
 
-void AppController::loop(void) {
-    string input;
-    string output;
+int AppController::loop(int argc, char *argv[]) {
+    QApplication app(argc, argv);
 
-    char temp[128];
-    bool running = true;
-    while (running) {
-        cout << ">> ";
-        getline (cin, input);
+    AppView view;
 
-        printf(": %s\n", input.c_str());
+    view.setFixedSize(WIN_WIDTH, WIN_HEIGHT);
+    view.setWindowTitle("Calculadora Basica");
+    view.setWindowIcon(QIcon("imgs/calculadora.ico"));
 
-        if (input == "q") {
-            running = false;
-        } else {
-            output = rpnc->solve(input);
-            cout << output << endl;
-        }
-    }
+    view.connectOnEqualClick(this, &AppController::onEqualClick);
+
+    view.show();
+
+    return app.exec();
+}
+
+void AppController::onEqualClick(void) {
+    qDebug() << "Button clicked, action performed!";
+}
+
+AppController::~AppController()
+{
+    //delete rpnc;
+    //rpnc = nullptr;
 }
 

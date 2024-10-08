@@ -1,18 +1,20 @@
 #pragma once
-#include <cstddef>
-#include <string>
-#include "rpn/rpncalc.h"
+#include <QObject>
+//#include "rpn/rpncalc.h"
 
-typedef double Op;
-
-class AppController
+class AppController : public QObject
 {
+    Q_OBJECT
+
 private:
+    //RPNcalc *rpnc;
+
 public:
-    RPNcalc *rpnc = new RPNcalc();
-
     AppController(void);
-    void loop(void);
-};
+    int loop(int argc, char *argv[]);
+    ~AppController();
 
+public slots:
+    void onEqualClick(void);
+};
 
