@@ -18,5 +18,9 @@ public:
 
 public slots:
     void on_equal_click(void);
+    void on_clear_click(void);
+    void on_delete_click(void);
+    void on_next_click(void);
+    void on_prev_click(void);
 };
 

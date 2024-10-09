@@ -8,6 +8,10 @@
 #include <QLineEdit>
 #include <QString>
 #include <QLabel>
+#include <QRegularExpressionValidator>
+#include <QTextCursor>
+
+#include <QDebug>
 
 #include <cstddef>
 #include <iterator>
@@ -18,16 +22,40 @@ class AppView : public QMainWindow
 
 private:
     QPushButton *bequal;
+    QPushButton *bclear;
+    QPushButton *bdelete;
+    QPushButton *bprev;
+    QPushButton *bnext;
+
+    QLineEdit *display;
+    QLabel *result;
 
 public:
     AppView(QWidget *parent = nullptr);
 
     void clear_display();
-    void write_display();
+    void write_display(QString text);
+    void append_display(QString text);
     QString read_display();
+
+    void clear_result();
+    void write_result(QString text);
+    QString read_result();
+
+    QPushButton *button_appends(QString text);
+    template<typename Func>
+    QPushButton *button_does(QString text, Func method);
 
     template<typename T, typename Func>
     void connect_on_equal_click(T *objectInstance, Func method);
+    template<typename T, typename Func>
+    void connect_on_clear_click(T *objectInstance, Func method);
+    template<typename T, typename Func>
+    void connect_on_delete_click(T *objectInstance, Func method);
+    template<typename T, typename Func>
+    void connect_on_prev_click(T *objectInstance, Func method);
+    template<typename T, typename Func>
+    void connect_on_next_click(T *objectInstance, Func method);
 
     ~AppView();
 };
@@ -38,38 +66,62 @@ public:
 #define FRAME_WIDTH (WIN_WIDTH - 2*(FRAME_PADDING))
 #define FRAME_HEIGHT (WIN_HEIGHT - 2*(FRAME_PADDING))
 
+//#define DISPLAY_REGEX "(sqrt|[0-9+-/*(){}\\[\\]]+)"
+#define DISPLAY_REGEX "^(?:[0-9]+|sqrt|[\\+\\-*/(){}\\[\\]])*$"
+#define LEFT_ARROW QString::fromUtf8("\u2190")
+#define RIGHT_ARROW QString::fromUtf8("\u2192")
+
 inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
 {
     QWidget *window = new QWidget(this);
 
+    // frame
     QFrame *f1 = new QFrame(window);
     f1->setObjectName("f1");
     f1->setStyleSheet("QFrame#b1 {border: 1px solid black}");
 
-    // Creamos los labels
-    QPushButton *b0 = new QPushButton("0");
-    QPushButton *b1 = new QPushButton("1");
-    QPushButton *b2 = new QPushButton("2");
-    QPushButton *b3 = new QPushButton("3");
-    QPushButton *b4 = new QPushButton("4");
-    QPushButton *b5 = new QPushButton("5");
-    QPushButton *b6 = new QPushButton("6");
-    QPushButton *b7 = new QPushButton("7");
-    QPushButton *b8 = new QPushButton("8");
-    QPushButton *b9 = new QPushButton("9");
-    QPushButton *bplus = new QPushButton("+");
-    QPushButton *bdiff = new QPushButton("-");
-    QPushButton *bmul = new QPushButton("*");
-    QPushButton *bdiv = new QPushButton("/");
-    QPushButton *bdot = new QPushButton(".");
-    bequal = new QPushButton("=");
+    // buttons
+    QPushButton *b0 = button_appends("0");
+    QPushButton *b1 = button_appends("1");
+    QPushButton *b2 = button_appends("2");
+    QPushButton *b3 = button_appends("3");
+    QPushButton *b4 = button_appends("4");
+    QPushButton *b5 = button_appends("5");
+    QPushButton *b6 = button_appends("6");
+    QPushButton *b7 = button_appends("7");
+    QPushButton *b8 = button_appends("8");
+    QPushButton *b9 = button_appends("9");
+    QPushButton *bplus = button_appends("+");
+    QPushButton *bdiff = button_appends("-");
+    QPushButton *bmul = button_appends("*");
+    QPushButton *bdiv = button_appends("/");
+    QPushButton *bpow= button_appends("^");
+    QPushButton *bsqrt= button_appends("sqrt");
+    QPushButton *bdot = button_appends(".");
+    QPushButton *blparenthesis= button_appends("(");
+    QPushButton *brparenthesis= button_appends(")");
+    QPushButton *blbrace= button_appends("[");
+    QPushButton *brbrace= button_appends("]");
+    QPushButton *blbracket= button_appends("{");
+    QPushButton *brbracket= button_appends("}");
 
-    QLineEdit *display = new QLineEdit();
-    QLabel *result = new QLabel("test");
+    bequal = new QPushButton("=");
+    bclear= new QPushButton("AC");
+    bdelete= new QPushButton("DEL");
+    bprev = new QPushButton(LEFT_ARROW);
+    bnext = new QPushButton(RIGHT_ARROW);
+
+    // displays
+    display = new QLineEdit();
+    QRegularExpression regex(DISPLAY_REGEX);
+    QRegularExpressionValidator *validator = new QRegularExpressionValidator(regex, display);
+    display->setValidator(validator);
+
+    result = new QLabel("test");
     result->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     result->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 
-    // Creamos un layout Grid
+    // Grid layout
     QGridLayout *grid = new QGridLayout(f1);
     grid->setSpacing(0);
     grid->addWidget(display, 0, 0, 1, 4);
@@ -91,24 +143,45 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     grid->addWidget(bdot, 5, 2);
     grid->addWidget(bdiv, 5, 3);
 
+    //
     setCentralWidget(window);
-
 }
 
-inline void AppView::clear_display()
-{
-    qDebug() << "clear_display";
+////////////////////////////////////////////////////////////////////////////////
+inline void AppView::clear_display() {
+    display->setText("");
 }
 
-inline void AppView::write_display()
-{
-    qDebug() << "write_display";
+inline void AppView::write_display(QString text) {
+    display->setText(text);
 }
 
-inline QString AppView::read_display()
-{
-    qDebug() << "read_display";
-    return "";
+inline void AppView::append_display(QString text) {
+    display->insert(text);
+}
+
+inline QString AppView::read_display() {
+    return display->text();
+}
+inline void AppView::clear_result() {
+    result->setText("");
+}
+
+inline void AppView::write_result(QString text) {
+    result->setText(text);
+}
+
+inline QString AppView::read_result() {
+    return result->text();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+inline QPushButton *AppView::button_appends(QString text) {
+    QPushButton *button = new QPushButton(text);
+    connect(button, &QPushButton::clicked, this, [this, text]() {
+        append_display(text);
+    });
+    return button;
 }
 
 template<typename T, typename Func>
@@ -117,6 +190,31 @@ void AppView::connect_on_equal_click(T *objectInstance, Func method)
     connect(bequal, &QPushButton::clicked, objectInstance, method);
 }
 
+template<typename T, typename Func>
+void AppView::connect_on_clear_click(T *objectInstance, Func method)
+{
+    connect(bclear, &QPushButton::clicked, objectInstance, method);
+}
+
+template<typename T, typename Func>
+void AppView::connect_on_delete_click(T *objectInstance, Func method)
+{
+    connect(bdelete, &QPushButton::clicked, objectInstance, method);
+}
+
+template<typename T, typename Func>
+void AppView::connect_on_prev_click(T *objectInstance, Func method)
+{
+    connect(bprev, &QPushButton::clicked, objectInstance, method);
+}
+
+template<typename T, typename Func>
+void AppView::connect_on_next_click(T *objectInstance, Func method)
+{
+    connect(bnext, &QPushButton::clicked, objectInstance, method);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 inline AppView::~AppView()
 {
     delete bequal;

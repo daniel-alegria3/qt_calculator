@@ -40,6 +40,10 @@ int AppController::loop(int argc, char *argv[]) {
     view.setWindowIcon(QIcon(":/imgs/calculator.ico"));
 
     view.connect_on_equal_click(this, &AppController::on_equal_click);
+    view.connect_on_clear_click(this, &AppController::on_clear_click);
+    view.connect_on_delete_click(this, &AppController::on_delete_click);
+    view.connect_on_prev_click(this, &AppController::on_prev_click);
+    view.connect_on_next_click(this, &AppController::on_next_click);
 
     view.show();
 
@@ -51,8 +55,24 @@ string AppController::solve(string expresion) {
 }
 
 void AppController::on_equal_click(void) {
+    qDebug() << "EQUAL";
 }
 
+void AppController::on_clear_click(void) {
+    qDebug() << "CLEAR";
+}
+
+void AppController::on_delete_click(void) {
+    qDebug() << "DELETE";
+}
+
+void AppController::on_prev_click(void) {
+    qDebug() << "PREV";
+}
+
+void AppController::on_next_click(void) {
+    qDebug() << "NEXT";
+}
 
 
 AppController::~AppController()
