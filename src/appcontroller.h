@@ -2,6 +2,7 @@
 #include <QObject>
 #include <string>
 #include "rpn/rpn.h"
+#include "appview.h"
 
 class AppController : public QObject
 {
@@ -9,6 +10,7 @@ class AppController : public QObject
 
 private:
     RPN *rpn;
+    AppView *view;
 
 public:
     AppController(void);

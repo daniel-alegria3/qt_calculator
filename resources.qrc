@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
     <file>imgs/calculator.ico</file>
+    <file>imgs/redo-arrow-symbol.png</file>
+    <file>imgs/undo-circular-arrow.png</file>
 </qresource>
 </RCC>

@@ -80,7 +80,7 @@ string RPN::eval_postfix(string expresion)
     for (size_t i = 0; i < postfix.size(); ++i) {
         string s = postfix[i];
 
-        printf("%s\n", s.c_str());
+        // printf("%s\n", s.c_str());
 
         op = get_operation(s);
 
@@ -89,12 +89,14 @@ string RPN::eval_postfix(string expresion)
 
         } else if (op->type == BINARY) {
             if (operand_stack->is_empty()) {
-                return "ERROR: Tried to pop empty stack";
+                // "ERROR: Tried to pop empty stack";
+                return "";
             };
             op2 = operand_stack->pop();
 
             if (operand_stack->is_empty()) {
-                return "ERROR: Tried to pop empty stack";
+                // "ERROR: Tried to pop empty stack";
+                return "";
             };
             op1 = operand_stack->pop();
 
@@ -247,5 +249,9 @@ void RPN::update_tokenizer() {
     }
 
     tokenizer->update_regex_pattern(delims);
+}
+
+bool RPN::is_expresion_tokenizable(string expresion) {
+    return tokenizer->is_tokenizable(expresion);
 }
 

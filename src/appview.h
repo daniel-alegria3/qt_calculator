@@ -10,11 +10,13 @@
 #include <QLabel>
 #include <QRegularExpressionValidator>
 #include <QTextCursor>
+#include <QMessageBox>
 
 #include <QDebug>
 
 #include <cstddef>
 #include <iterator>
+#include <string>
 
 class AppView : public QMainWindow
 {
@@ -30,17 +32,24 @@ private:
     QLineEdit *display;
     QLabel *result;
 
+    QMessageBox *warn_msgbox;
+
 public:
     AppView(QWidget *parent = nullptr);
 
     void clear_display();
-    void write_display(QString text);
-    void append_display(QString text);
-    QString read_display();
+    void write_display(string text);
+    void append_display(string text);
+    string read_display();
 
     void clear_result();
-    void write_result(QString text);
-    QString read_result();
+    void write_result(string text);
+    string read_result();
+
+    void set_display_regex_validator(string text);
+
+    void warn_display_parenthesis();
+    void warn_display_eval();
 
     QPushButton *button_appends(QString text);
     template<typename Func>
@@ -66,9 +75,6 @@ public:
 #define FRAME_WIDTH (WIN_WIDTH - 2*(FRAME_PADDING))
 #define FRAME_HEIGHT (WIN_HEIGHT - 2*(FRAME_PADDING))
 
-//#define DISPLAY_REGEX "([0-9+-/*(){}\\[\\]]+)"
-//#define DISPLAY_REGEX "^(?:[0-9]+|sqrt|[\\+\\-*/(){}\\[\\]])*$"
-#define DISPLAY_REGEX "^(?:[0-9]+(?:\\.[0-9]+)?|sqrt|[\\+\\-*/(){}\\[\\]])*$"
 #define LEFT_ARROW QString::fromUtf8("\u2190")
 #define RIGHT_ARROW QString::fromUtf8("\u2192")
 
@@ -111,14 +117,15 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     bequal = new QPushButton("=");
     bclear= new QPushButton("AC");
     bdelete= new QPushButton("DEL");
-    bprev = new QPushButton(LEFT_ARROW);
-    bnext = new QPushButton(RIGHT_ARROW);
+    /* bprev = new QPushButton(LEFT_ARROW); */
+    /* bnext = new QPushButton(RIGHT_ARROW); */
+    bprev = new QPushButton();
+    bnext = new QPushButton();
+    bprev->setIcon(QIcon(":imgs/undo-circular-arrow.png"));
+    bnext->setIcon(QIcon(":imgs/redo-arrow-symbol.png"));
 
     // displays
     display = new QLineEdit();
-    QRegularExpression regex(DISPLAY_REGEX);
-    QRegularExpressionValidator *validator = new QRegularExpressionValidator(regex, display);
-    display->setValidator(validator);
 
     result = new QLabel("test");
     result->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -159,7 +166,14 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     grid->addWidget(bdot, 5, 1);
     grid->addWidget(bprev, 5, 2);
     grid->addWidget(bnext, 5, 3);
-    grid->addWidget(bequal, 5, 4, 1, 3);
+    grid->addWidget(bsqrt, 5, 4);
+    grid->addWidget(bequal, 5, 5, 1, 2);
+
+    //
+    warn_msgbox = new QMessageBox(window);
+    warn_msgbox->setIcon(QMessageBox::Information);
+    warn_msgbox->setStandardButtons(QMessageBox::Ok);
+    warn_msgbox->setDefaultButton(QMessageBox::Ok);
 
     //
     setCentralWidget(window);
@@ -170,36 +184,53 @@ inline void AppView::clear_display() {
     display->setText("");
 }
 
-inline void AppView::write_display(QString text) {
-    display->setText(text);
+inline void AppView::write_display(string text) {
+    display->setText(QString::fromStdString(text));
 }
 
-inline void AppView::append_display(QString text) {
-    display->insert(text);
+inline void AppView::append_display(string text) {
+    display->insert(QString::fromStdString(text));
 }
 
-inline QString AppView::read_display() {
-    return display->text();
+inline string AppView::read_display() {
+    return display->text().toStdString();
 }
 inline void AppView::clear_result() {
     result->setText("");
 }
 
-inline void AppView::write_result(QString text) {
-    result->setText(text);
+inline void AppView::write_result(string text) {
+    result->setText(QString::fromStdString(text));
 }
 
-inline QString AppView::read_result() {
-    return result->text();
+inline string AppView::read_result() {
+    return result->text().toStdString();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 inline QPushButton *AppView::button_appends(QString text) {
     QPushButton *button = new QPushButton(text);
     connect(button, &QPushButton::clicked, this, [this, text]() {
-        append_display(text);
+        append_display(text.toStdString());
     });
     return button;
+}
+
+inline void AppView::set_display_regex_validator(string text) {
+    QRegularExpression regex(QString::fromStdString(text));
+    QRegularExpressionValidator *validator = new QRegularExpressionValidator(regex, this);
+    display->setValidator(validator);
+}
+
+inline void AppView::warn_display_parenthesis() {
+    warn_msgbox->setText("Advertencia");
+    warn_msgbox->setInformativeText("Parentesis Incorrecto!");
+    warn_msgbox->exec();
+}
+inline void AppView::warn_display_eval() {
+    warn_msgbox->setText("Advertencia");
+    warn_msgbox->setInformativeText("Expresion Aritmetica Incorrecta!");
+    warn_msgbox->exec();
 }
 
 template<typename T, typename Func>
