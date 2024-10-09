@@ -66,8 +66,9 @@ public:
 #define FRAME_WIDTH (WIN_WIDTH - 2*(FRAME_PADDING))
 #define FRAME_HEIGHT (WIN_HEIGHT - 2*(FRAME_PADDING))
 
-//#define DISPLAY_REGEX "(sqrt|[0-9+-/*(){}\\[\\]]+)"
-#define DISPLAY_REGEX "^(?:[0-9]+|sqrt|[\\+\\-*/(){}\\[\\]])*$"
+//#define DISPLAY_REGEX "([0-9+-/*(){}\\[\\]]+)"
+//#define DISPLAY_REGEX "^(?:[0-9]+|sqrt|[\\+\\-*/(){}\\[\\]])*$"
+#define DISPLAY_REGEX "^(?:[0-9]+(?:\\.[0-9]+)?|sqrt|[\\+\\-*/(){}\\[\\]])*$"
 #define LEFT_ARROW QString::fromUtf8("\u2190")
 #define RIGHT_ARROW QString::fromUtf8("\u2192")
 
@@ -91,6 +92,7 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     QPushButton *b7 = button_appends("7");
     QPushButton *b8 = button_appends("8");
     QPushButton *b9 = button_appends("9");
+
     QPushButton *bplus = button_appends("+");
     QPushButton *bdiff = button_appends("-");
     QPushButton *bmul = button_appends("*");
@@ -98,6 +100,7 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     QPushButton *bpow= button_appends("^");
     QPushButton *bsqrt= button_appends("sqrt");
     QPushButton *bdot = button_appends(".");
+
     QPushButton *blparenthesis= button_appends("(");
     QPushButton *brparenthesis= button_appends(")");
     QPushButton *blbrace= button_appends("[");
@@ -124,24 +127,39 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     // Grid layout
     QGridLayout *grid = new QGridLayout(f1);
     grid->setSpacing(0);
-    grid->addWidget(display, 0, 0, 1, 4);
-    grid->addWidget(result, 1, 0, 1, 4);
-    grid->addWidget(b1, 2, 0);
-    grid->addWidget(b2, 2, 1);
-    grid->addWidget(b3, 2, 2);
-    grid->addWidget(bplus, 2, 3);
+    grid->addWidget(display, 0, 0, 1, 7);
+    grid->addWidget(result, 1, 0, 1, 7);
+
+    grid->addWidget(b7, 2, 0);
+    grid->addWidget(b8, 2, 1);
+    grid->addWidget(b9, 2, 2);
+    grid->addWidget(bdelete, 2, 3);
+    grid->addWidget(bclear, 2, 4);
+    grid->addWidget(brparenthesis, 2, 5);
+    grid->addWidget(blparenthesis, 2, 6);
+
     grid->addWidget(b4, 3, 0);
     grid->addWidget(b5, 3, 1);
     grid->addWidget(b6, 3, 2);
-    grid->addWidget(bdiff, 3, 3);
-    grid->addWidget(b7, 4, 0);
-    grid->addWidget(b8, 4, 1);
-    grid->addWidget(b9, 4, 2);
-    grid->addWidget(bmul, 4, 3);
-    grid->addWidget(bequal, 5, 0);
-    grid->addWidget(b0, 5, 1);
-    grid->addWidget(bdot, 5, 2);
-    grid->addWidget(bdiv, 5, 3);
+    grid->addWidget(bmul, 3, 3);
+    grid->addWidget(bdiv, 3, 4);
+    grid->addWidget(brbrace, 3, 5);
+    grid->addWidget(blbrace, 3, 6);
+
+    grid->addWidget(b1, 4, 0);
+    grid->addWidget(b2, 4, 1);
+    grid->addWidget(b3, 4, 2);
+    grid->addWidget(bplus, 4, 3);
+    grid->addWidget(bdiff, 4, 4);
+    grid->addWidget(brbracket, 4, 5);
+    grid->addWidget(blbracket, 4, 6);
+
+
+    grid->addWidget(b0, 5, 0);
+    grid->addWidget(bdot, 5, 1);
+    grid->addWidget(bprev, 5, 2);
+    grid->addWidget(bnext, 5, 3);
+    grid->addWidget(bequal, 5, 4, 1, 3);
 
     //
     setCentralWidget(window);

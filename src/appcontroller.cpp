@@ -34,7 +34,7 @@ int AppController::loop(int argc, char *argv[]) {
 
     AppView view;
 
-    view.setFixedSize(WIN_WIDTH, WIN_HEIGHT);
+    // view.setFixedSize(WIN_WIDTH, WIN_HEIGHT);
     view.setWindowTitle("Calculadora Basica");
 
     view.setWindowIcon(QIcon(":/imgs/calculator.ico"));
