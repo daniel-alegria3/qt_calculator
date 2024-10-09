@@ -44,37 +44,37 @@ TEST_CASE("RPN can eval infix expression", "[rpn]") {
     init_rpn();
     string s, pos, eva;
 
-    s = "( 2 + 5 ) * 3 + 1";
+    s = "(2+5)*3+1";
     pos = rpn->infix_to_postfix(s);
     eva = rpn->eval_postfix(pos);
     CHECK(pos == "2 5 + 3 * 1 + ");
     CHECK(stof(eva) == 22);
 
-    s = "2 + 5 * 3 + 1";
+    s = "2+5*3+1";
     pos = rpn->infix_to_postfix(s);
     eva = rpn->eval_postfix(pos);
     CHECK(pos == "2 5 3 * + 1 + ");
     CHECK(stof(eva) == 18);
 
-    s = "{ ( 2 + 3 ) * 5 ^ ( 3 - 1 ) }",
+    s = "{(2+3)*5^(3-1)}",
     pos = rpn->infix_to_postfix(s);
     eva = rpn->eval_postfix(pos);
     CHECK(pos == "2 3 + 5 3 1 - ^ * ");
     CHECK(stof(eva) == 125);
 
-    s = "{ ( 2 + 3 ) * 5 ^ ( 2 + 1 ) - [ 4 * 5 - ( 2 - 1 ) ] }";
+    s = "{(2+3)*5^(2+1)-[4*5-(2-1)]}";
     pos = rpn->infix_to_postfix(s);
     eva = rpn->eval_postfix(pos);
     CHECK(pos == "2 3 + 5 2 1 + ^ * 4 5 * 2 1 - - - ");
     CHECK(stof(eva) == 606);
 
-    s = "{ ( 2 + 3 ) * 5 ^ ( 3 - 1 ) }";
+    s = "{(2+3)*5^(3-1)}";
     pos = rpn->infix_to_postfix(s);
     eva = rpn->eval_postfix(pos);
     CHECK(pos == "2 3 + 5 3 1 - ^ * ");
     CHECK(stof(eva) == 125);
 
-    s = "{ ( 2 + 3 ) * sqrt ( 3 - 1 ) }";
+    s = "{(2+3)*sqrt(3-1)}";
     pos = rpn->infix_to_postfix(s);
     eva = rpn->eval_postfix(pos);
     CHECK(pos == "2 3 + 3 1 - sqrt * ");
@@ -110,7 +110,7 @@ TEST_CASE("RPN can eval infix expression, checking parenthesis", "[rpn]") {
     string s, pos, eva;
     bool par;
 
-    s = "( 1 )";
+    s = "(1)";
     par = rpn->is_correct_parenthesis(s);
     CHECK(par == true);
     pos = rpn->infix_to_postfix(s);
@@ -118,7 +118,7 @@ TEST_CASE("RPN can eval infix expression, checking parenthesis", "[rpn]") {
     CHECK(pos == "1 ");
     CHECK(stof(eva) == 1);
 
-    s = "( [ { 2 + 3 } - 4 ] / 2 ) ^ 2";
+    s = "([{2+3}-4]/2)^2";
     par = rpn->is_correct_parenthesis(s);
     CHECK(par == true);
     pos = rpn->infix_to_postfix(s);
@@ -126,7 +126,7 @@ TEST_CASE("RPN can eval infix expression, checking parenthesis", "[rpn]") {
     CHECK(pos == "2 3 + 4 - 2 / 2 ^ ");
     CHECK(stof(eva) == 1);
 
-    s = "{ [ 2 + 6 * ( 75 + 11 - 4 ) ] } * [ 5 - ( 2 - 1 ) ]";
+    s = "{[2+6*(75+11-4)]}*[5-(2-1)]";
     par = rpn->is_correct_parenthesis(s);
     CHECK(par == true);
     pos = rpn->infix_to_postfix(s);
@@ -134,7 +134,7 @@ TEST_CASE("RPN can eval infix expression, checking parenthesis", "[rpn]") {
     CHECK(pos == "2 6 75 11 + 4 - * + 5 2 1 - - * ");
     CHECK(stof(eva) == 1976);
 
-    s = "{ [ 2 + 10 * ( 15 + 16 - 4 ) ] } * [ 5 - ( 2 - 1 ) + 9 ]";
+    s = "{[2+10*(15+16-4)]}*[5-(2-1)+9]";
     par = rpn->is_correct_parenthesis(s);
     CHECK(par == true);
     pos = rpn->infix_to_postfix(s);
@@ -144,7 +144,7 @@ TEST_CASE("RPN can eval infix expression, checking parenthesis", "[rpn]") {
 
     /// TODO: IMPLEMENT
 
-    s = "( ( 12 + 7 * [ 35 + 14 - 3 ] * ( 5 - ( 2 - 1 )";
+    s = "((12+7*[35+14-3]*(5-(2-1)";
     par = rpn->is_correct_parenthesis(s);
     CHECK(par == false);
     // pos = rpn->infix_to_postfix(s);
@@ -152,14 +152,14 @@ TEST_CASE("RPN can eval infix expression, checking parenthesis", "[rpn]") {
     // CHECK(pos == "");
     // CHECK(stof(eva) == 0);
 
-    s = "( ( 21 + 3 * [ 52 + 7 * 4 ) * ( 5 - ( 2 -1 } + 4";
+    s = "((21+3*[52+7*4)*(5-(2-1}+4";
     CHECK(par == false);
     // pos = rpn->infix_to_postfix(s);
     // eva = rpn->eval_postfix(pos);
     // CHECK(pos == "");
     // CHECK(stof(eva) == 0);
 
-    s = "( ( 21 + 2 * [ 7 * 6 ) * ( 5- ( 2 - 1 } + 2 (";
+    s = "((21+2*[7*6)*(5-(2-1}+2(";
     CHECK(par == false);
     // pos = rpn->infix_to_postfix(s);
     // eva = rpn->eval_postfix(pos);

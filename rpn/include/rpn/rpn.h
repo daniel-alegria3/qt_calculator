@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "stack.h"
+#include "rpn/tokenizer.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ class RPN
 private:
     vector<Operation> operations;
     vector<Grouping> groupings;
+    Tokenizer *tokenizer;
 
     string get_grouping_type(const string s);
     string get_grouping_type_and_opposite(const string s, string *opposite);
@@ -34,7 +36,8 @@ private:
     Operation *get_operation(const string s);
     int get_precedence(const string s);
     bool is_unary_op(const string s);
-    vector<string> split(const string s, const string delimiter);
+
+    void update_tokenizer();
 
 public:
     bool is_correct_parenthesis(string expresion);

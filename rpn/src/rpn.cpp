@@ -1,6 +1,7 @@
 #include <cmath>
 #include <stdlib.h>
 #include "rpn/stack.h"
+#include "rpn/tokenizer.h"
 #include "rpn/rpn.h"
 
 #include <stdio.h>
@@ -8,14 +9,14 @@
 RPN::RPN(void)
 {
     operand_stack = new Stack<double>();
+    tokenizer = new Tokenizer();
 }
 
 string RPN::infix_to_postfix(string expresion)
 {
     Stack<string> *stack = new Stack<string>();
 
-    // expresion = expresion.trim();
-    vector<string> infix = split(expresion, " ");
+    vector<string> infix = tokenizer->tokenize(expresion);
     string output = "";
 
     string type, opposite;
@@ -23,9 +24,6 @@ string RPN::infix_to_postfix(string expresion)
 
     for (size_t i = 0; i < infix.size(); ++i) {
         string s = infix[i];
-        if (s == "") {
-            continue;
-        }
 
         type = get_grouping_type_and_opposite(s, &opposite);
 
@@ -75,16 +73,14 @@ string RPN::eval_postfix(string expresion)
 {
     operand_stack->empty();
 
-    // expresion = expresion.trim();
-    vector<string> postfix = split(expresion, " ");
+    vector<string> postfix = tokenizer->tokenize(expresion);
 
     double op1, op2;
     Operation *op;
     for (size_t i = 0; i < postfix.size(); ++i) {
         string s = postfix[i];
-        if (s == "") {
-            continue;
-        }
+
+        printf("%s\n", s.c_str());
 
         op = get_operation(s);
 
@@ -123,16 +119,12 @@ string RPN::eval_postfix(string expresion)
 bool RPN::is_correct_parenthesis(string expresion) {
     Stack<string> *stack = new Stack<string>();
 
-    // expresion = expresion.trim();
-    vector<string> parenthesis = split(expresion, " ");
+    vector<string> parenthesis = tokenizer->tokenize(expresion);
 
     string s;
     string type, opposite;
     for (size_t i = 0; i < parenthesis.size(); ++i) {
         s = parenthesis[i];
-        if (s == "") {
-            continue;
-        }
         type = get_grouping_type_and_opposite(s, &opposite);
         if (type == "OPENING") {
             stack->push(s);
@@ -153,6 +145,7 @@ void RPN::add_grouping(string opening, string closing)
 {
     Grouping gr = {.opening = opening, .closing = closing};
     groupings.push_back(gr);
+    update_tokenizer();
 }
 
 void RPN::add_operation(string symbol, int precedence, enum OpType type,
@@ -165,6 +158,7 @@ void RPN::add_operation(string symbol, int precedence, enum OpType type,
         .func = func,
     };
     operations.push_back(op);
+    update_tokenizer();
 }
 
 
@@ -236,21 +230,22 @@ bool RPN::is_unary_op(const string s)
     return false;
 }
 
-vector<string> RPN::split(const string s, const string delimiter)
-{
+void RPN::update_tokenizer() {
+    vector<string> delims;
+    Operation *op;
+    Grouping *gr;
 
-    vector<string> tokens;
-    size_t last = 0;
-    size_t next = 0;
-    string token;
-    while ((next = s.find(delimiter, last)) != string::npos) {
-        token = s.substr(last, next - last);
-        tokens.push_back(token);
-        last = next + 1;
+    for (size_t i = 0; i < operations.size(); ++i) {
+        op = &operations[i];
+        delims.push_back(op->symbol);
     }
-    token = s.substr(last);
-    tokens.push_back(token);
 
-    return tokens;
+    for (size_t i = 0; i < groupings.size(); ++i) {
+        gr = &groupings[i];
+        delims.push_back(gr->opening);
+        delims.push_back(gr->closing);
+    }
+
+    tokenizer->update_regex_pattern(delims);
 }
 

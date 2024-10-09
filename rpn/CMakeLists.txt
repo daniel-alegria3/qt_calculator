@@ -19,6 +19,8 @@ target_sources(${PROJECT_NAME}
         src/rpncalc.cpp
         src/stack.cpp
         src/undoredo.cpp
+        src/tokenizer.cpp
+        include/rpn/tokenizer.h
 )
 target_include_directories(${PROJECT_NAME}
     PUBLIC

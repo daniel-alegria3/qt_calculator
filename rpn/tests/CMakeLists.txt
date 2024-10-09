@@ -16,6 +16,7 @@ add_executable(
     # test_rpn.cpp
     # test_undoredo.cpp
     ../src/rpn.cpp
+    ../src/tokenizer.cpp
     ../src/undoredo.cpp
 )
 target_include_directories(tests PUBLIC ../include)
