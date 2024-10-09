@@ -3,13 +3,30 @@
 
 #include "appcontroller.h"
 #include "appview.h"
-//#include "rpn/rpncalc.h"
+#include "rpn/rpn.h"
 
 #define WIN_WIDTH 400
 #define WIN_HEIGHT 500
 
+double op_sum(double a, double b);
+double op_diff(double a, double b);
+double op_mul(double a, double b);
+double op_pow(double a, double b);
+double op_div(double a, double b);
+double op_sqrt(double a, double b);
+
 AppController::AppController (void) {
-    //rpnc = new RPNcalc();
+    rpn = new RPN();
+    rpn->add_grouping("(", ")");
+    rpn->add_grouping("[", "]");
+    rpn->add_grouping("{", "}");
+
+    rpn->add_operation("sqrt", 1, UNARY, &op_sqrt);
+    rpn->add_operation("^", 1, BINARY, &op_pow);
+    rpn->add_operation("/", 2, BINARY, &op_div);
+    rpn->add_operation("*", 2, BINARY, &op_mul);
+    rpn->add_operation("-", 3, BINARY, &op_diff);
+    rpn->add_operation("+", 3, BINARY, &op_sum);
 }
 
 int AppController::loop(int argc, char *argv[]) {
@@ -19,22 +36,43 @@ int AppController::loop(int argc, char *argv[]) {
 
     view.setFixedSize(WIN_WIDTH, WIN_HEIGHT);
     view.setWindowTitle("Calculadora Basica");
-    view.setWindowIcon(QIcon("imgs/calculadora.ico"));
 
-    view.connectOnEqualClick(this, &AppController::onEqualClick);
+    view.setWindowIcon(QIcon(":/imgs/calculator.ico"));
+
+    view.connect_on_equal_click(this, &AppController::on_equal_click);
 
     view.show();
 
     return app.exec();
 }
 
-void AppController::onEqualClick(void) {
-    qDebug() << "Button clicked, action performed!";
+string AppController::solve(string expresion) {
+    return rpn->eval_postfix(rpn->infix_to_postfix(expresion));
 }
+
+void AppController::on_equal_click(void) {
+}
+
+
 
 AppController::~AppController()
 {
-    //delete rpnc;
-    //rpnc = nullptr;
+    delete rpn;
+    rpn = nullptr;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+double op_sum(double a, double b) { return a + b; }
+double op_diff(double a, double b) { return a - b; }
+double op_mul(double a, double b) { return a * b; }
+double op_pow(double a, double b) {
+    int n = (int) b;
+    double r = 1;
+    while (n-- > 0) {
+        r *= a;
+    }
+    return r;
+}
+double op_div(double a, double b) { return a - b; }
+double op_sqrt(double a, double b) { return sqrt(a); }
 

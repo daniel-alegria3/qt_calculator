@@ -1,20 +1,22 @@
 #pragma once
 #include <QObject>
-//#include "rpn/rpncalc.h"
+#include <string>
+#include "rpn/rpn.h"
 
 class AppController : public QObject
 {
     Q_OBJECT
 
 private:
-    //RPNcalc *rpnc;
+    RPN *rpn;
 
 public:
     AppController(void);
     int loop(int argc, char *argv[]);
+    string solve(string expresion);
     ~AppController();
 
 public slots:
-    void onEqualClick(void);
+    void on_equal_click(void);
 };
 

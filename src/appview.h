@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QString>
+#include <QLabel>
 
 #include <cstddef>
 #include <iterator>
@@ -26,7 +27,7 @@ public:
     QString read_display();
 
     template<typename T, typename Func>
-    void connectOnEqualClick(T *objectInstance, Func method);
+    void connect_on_equal_click(T *objectInstance, Func method);
 
     ~AppView();
 };
@@ -63,28 +64,32 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     QPushButton *bdot = new QPushButton(".");
     bequal = new QPushButton("=");
 
-    QLineEdit *display = new QLineEdit("");
+    QLineEdit *display = new QLineEdit();
+    QLabel *result = new QLabel("test");
+    result->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    result->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 
     // Creamos un layout Grid
     QGridLayout *grid = new QGridLayout(f1);
     grid->setSpacing(0);
     grid->addWidget(display, 0, 0, 1, 4);
-    grid->addWidget(b1, 1, 0);
-    grid->addWidget(b2, 1, 1);
-    grid->addWidget(b3, 1, 2);
-    grid->addWidget(bplus, 1, 3);
-    grid->addWidget(b4, 2, 0);
-    grid->addWidget(b5, 2, 1);
-    grid->addWidget(b6, 2, 2);
-    grid->addWidget(bdiff, 2, 3);
-    grid->addWidget(b7, 3, 0);
-    grid->addWidget(b8, 3, 1);
-    grid->addWidget(b9, 3, 2);
-    grid->addWidget(bmul, 3, 3);
-    grid->addWidget(bequal, 4, 0);
-    grid->addWidget(b0, 4, 1);
-    grid->addWidget(bdot, 4, 2);
-    grid->addWidget(bdiv, 4, 3);
+    grid->addWidget(result, 1, 0, 1, 4);
+    grid->addWidget(b1, 2, 0);
+    grid->addWidget(b2, 2, 1);
+    grid->addWidget(b3, 2, 2);
+    grid->addWidget(bplus, 2, 3);
+    grid->addWidget(b4, 3, 0);
+    grid->addWidget(b5, 3, 1);
+    grid->addWidget(b6, 3, 2);
+    grid->addWidget(bdiff, 3, 3);
+    grid->addWidget(b7, 4, 0);
+    grid->addWidget(b8, 4, 1);
+    grid->addWidget(b9, 4, 2);
+    grid->addWidget(bmul, 4, 3);
+    grid->addWidget(bequal, 5, 0);
+    grid->addWidget(b0, 5, 1);
+    grid->addWidget(bdot, 5, 2);
+    grid->addWidget(bdiv, 5, 3);
 
     setCentralWidget(window);
 
@@ -107,7 +112,7 @@ inline QString AppView::read_display()
 }
 
 template<typename T, typename Func>
-void AppView::connectOnEqualClick(T *objectInstance, Func method)
+void AppView::connect_on_equal_click(T *objectInstance, Func method)
 {
     connect(bequal, &QPushButton::clicked, objectInstance, method);
 }

@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/appcontroller.cpp
     src/appview.cpp
+    resources.qrc
 )
 
 target_include_directories(${PROJECT_NAME}
