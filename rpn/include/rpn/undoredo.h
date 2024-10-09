@@ -10,16 +10,19 @@ class UndoRedo
 {
 private:
 public:
-    Stack<char> *undos;
-    Stack<char> *redos;
+    Stack<string> *undos;
+    Stack<string> *redos;
 
     UndoRedo();
 
-    void input_char(char c);
-    bool undo(void);
-    bool redo(void);
+    void input_string(string s);
+    string undo(void);
+    string redo(void);
     void empty(void);
     string show(void);
     string simulate(vector<string> op);
+
+    bool is_undos_empty(void);
+    bool is_redos_empty(void);
 };
 

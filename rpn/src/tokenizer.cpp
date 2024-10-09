@@ -21,6 +21,12 @@ Tokenizer::Tokenizer(const vector<string> delimiters)
     whitespace_pattern = regex(R"(\s+)");
 }
 
+Tokenizer::Tokenizer(string pattern)
+{
+    regex_pattern = regex(pattern);
+    whitespace_pattern = regex(R"(\s+)");
+}
+
 vector<string> Tokenizer::tokenize(string input)
 {
     // input = regex_replace(input, whitespace_pattern, "");

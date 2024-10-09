@@ -21,6 +21,7 @@ public:
 
     Tokenizer();
     Tokenizer(const vector<string> delimiters);
+    Tokenizer(string pattern);
     vector<string> tokenize(string input);
     void update_regex_pattern(const vector<string> delimiters);
     bool is_tokenizable(string input);

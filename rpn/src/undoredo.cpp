@@ -2,34 +2,41 @@
 
 UndoRedo::UndoRedo()
 {
-    undos = new Stack<char>();
-    redos = new Stack<char>();
+    undos = new Stack<string>();
+    redos = new Stack<string>();
 }
 
-void UndoRedo::input_char(char c)
+void UndoRedo::input_string(string s)
 {
-    undos->push(c);
+    undos->push(s);
     redos->empty();
 }
 
-bool UndoRedo::undo(void)
+string UndoRedo::undo(void)
 {
-    if (!undos->is_empty()) {
-        char x = (char) undos->pop();
-        redos->push(x);
-        return true;
+    if (undos->is_empty()) {
+        return "";
     }
-    return false;
+
+    string x = undos->pop();
+    redos->push(x);
+
+    if ( !undos->is_empty() ) {
+        return undos->peek();
+    }
+    return "";
 }
 
-bool UndoRedo::redo(void)
+string UndoRedo::redo(void)
 {
-    if (!redos->is_empty()) {
-        char x = (char) redos->pop();
-        undos->push(x);
-        return true;
+    if (redos->is_empty()) {
+        return "";
     }
-    return false;
+
+    string x = redos->pop();
+    undos->push(x);
+
+    return undos->peek();
 }
 
 void UndoRedo::empty(void)
@@ -52,15 +59,25 @@ string UndoRedo::simulate(vector<string> op)
     int n = op.size();
     for (int i = 0; i < n; ++i) {
         if (op[i] == "UNDO") {
-            if (undo()) {
+            if (undo() != "") {
             }
         } else if (op[i] == "REDO") {
-            if (redo()) {
+            if (redo() != "") {
             }
         } else {
-            input_char(op[i][0]);
+            input_string(op[i]);
         }
     }
     return show();
+}
+
+bool UndoRedo::is_undos_empty()
+{
+    return undos->is_empty();
+}
+
+bool UndoRedo::is_redos_empty()
+{
+    return redos->is_empty();
 }
 

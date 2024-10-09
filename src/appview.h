@@ -26,8 +26,8 @@ private:
     QPushButton *bequal;
     QPushButton *bclear;
     QPushButton *bdelete;
-    QPushButton *bprev;
-    QPushButton *bnext;
+    QPushButton *bundo;
+    QPushButton *bredo;
 
     QLineEdit *display;
     QLabel *result;
@@ -51,9 +51,17 @@ public:
     void warn_display_parenthesis();
     void warn_display_eval();
 
+    void enable_redo_btn();
+    void enable_undo_btn();
+    void disable_redo_btn();
+    void disable_undo_btn();
+
     QPushButton *button_appends(QString text);
     template<typename Func>
     QPushButton *button_does(QString text, Func method);
+
+    template<typename T, typename Func>
+    void connect_on_display_change(T *objectInstance, Func method);
 
     template<typename T, typename Func>
     void connect_on_equal_click(T *objectInstance, Func method);
@@ -65,6 +73,8 @@ public:
     void connect_on_prev_click(T *objectInstance, Func method);
     template<typename T, typename Func>
     void connect_on_next_click(T *objectInstance, Func method);
+
+    void keep_display_focus();
 
     ~AppView();
 };
@@ -117,15 +127,16 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     bequal = new QPushButton("=");
     bclear= new QPushButton("AC");
     bdelete= new QPushButton("DEL");
-    /* bprev = new QPushButton(LEFT_ARROW); */
-    /* bnext = new QPushButton(RIGHT_ARROW); */
-    bprev = new QPushButton();
-    bnext = new QPushButton();
-    bprev->setIcon(QIcon(":imgs/undo-circular-arrow.png"));
-    bnext->setIcon(QIcon(":imgs/redo-arrow-symbol.png"));
+    /* bundo = new QPushButton(LEFT_ARROW); */
+    /* bredo = new QPushButton(RIGHT_ARROW); */
+    bundo = new QPushButton();
+    bredo = new QPushButton();
+    bundo->setIcon(QIcon(":imgs/undo-circular-arrow.png"));
+    bredo->setIcon(QIcon(":imgs/redo-arrow-symbol.png"));
 
     // displays
     display = new QLineEdit();
+    /* connect(display, &QLineEdit::editingFinished, this, &AppView::keep_display_focus); */
 
     result = new QLabel("test");
     result->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -142,30 +153,30 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     grid->addWidget(b9, 2, 2);
     grid->addWidget(bdelete, 2, 3);
     grid->addWidget(bclear, 2, 4);
-    grid->addWidget(brparenthesis, 2, 5);
-    grid->addWidget(blparenthesis, 2, 6);
+    grid->addWidget(blparenthesis, 2, 5);
+    grid->addWidget(brparenthesis, 2, 6);
 
     grid->addWidget(b4, 3, 0);
     grid->addWidget(b5, 3, 1);
     grid->addWidget(b6, 3, 2);
     grid->addWidget(bmul, 3, 3);
     grid->addWidget(bdiv, 3, 4);
-    grid->addWidget(brbrace, 3, 5);
-    grid->addWidget(blbrace, 3, 6);
+    grid->addWidget(blbrace, 3, 5);
+    grid->addWidget(brbrace, 3, 6);
 
     grid->addWidget(b1, 4, 0);
     grid->addWidget(b2, 4, 1);
     grid->addWidget(b3, 4, 2);
     grid->addWidget(bplus, 4, 3);
     grid->addWidget(bdiff, 4, 4);
-    grid->addWidget(brbracket, 4, 5);
-    grid->addWidget(blbracket, 4, 6);
+    grid->addWidget(blbracket, 4, 5);
+    grid->addWidget(brbracket, 4, 6);
 
 
     grid->addWidget(b0, 5, 0);
     grid->addWidget(bdot, 5, 1);
-    grid->addWidget(bprev, 5, 2);
-    grid->addWidget(bnext, 5, 3);
+    grid->addWidget(bundo, 5, 2);
+    grid->addWidget(bredo, 5, 3);
     grid->addWidget(bsqrt, 5, 4);
     grid->addWidget(bequal, 5, 5, 1, 2);
 
@@ -185,7 +196,9 @@ inline void AppView::clear_display() {
 }
 
 inline void AppView::write_display(string text) {
+    display->blockSignals(true);
     display->setText(QString::fromStdString(text));
+    display->blockSignals(false);
 }
 
 inline void AppView::append_display(string text) {
@@ -233,6 +246,28 @@ inline void AppView::warn_display_eval() {
     warn_msgbox->exec();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+inline void AppView::enable_redo_btn() {
+    bredo->setEnabled(true);
+}
+inline void AppView::enable_undo_btn() {
+    bundo->setEnabled(true);
+}
+
+inline void AppView::disable_redo_btn() {
+    bredo->setEnabled(false);
+}
+inline void AppView::disable_undo_btn() {
+    bundo->setEnabled(false);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+template<typename T, typename Func>
+void AppView::connect_on_display_change(T *objectInstance, Func method)
+{
+    connect(display, &QLineEdit::textChanged, objectInstance, method);
+}
+
 template<typename T, typename Func>
 void AppView::connect_on_equal_click(T *objectInstance, Func method)
 {
@@ -254,16 +289,20 @@ void AppView::connect_on_delete_click(T *objectInstance, Func method)
 template<typename T, typename Func>
 void AppView::connect_on_prev_click(T *objectInstance, Func method)
 {
-    connect(bprev, &QPushButton::clicked, objectInstance, method);
+    connect(bundo, &QPushButton::clicked, objectInstance, method);
 }
 
 template<typename T, typename Func>
 void AppView::connect_on_next_click(T *objectInstance, Func method)
 {
-    connect(bnext, &QPushButton::clicked, objectInstance, method);
+    connect(bredo, &QPushButton::clicked, objectInstance, method);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+inline void AppView::keep_display_focus() {
+    display->setFocus();
+}
+
 inline AppView::~AppView()
 {
     delete bequal;

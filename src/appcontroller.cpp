@@ -6,6 +6,7 @@
 #include "appcontroller.h"
 #include "appview.h"
 #include "rpn/rpn.h"
+#include "rpn/undoredo.h"
 
 #define WIN_WIDTH 400
 #define WIN_HEIGHT 500
@@ -29,6 +30,8 @@ AppController::AppController (void) {
     rpn->add_operation("*", 2, BINARY, &op_mul);
     rpn->add_operation("-", 3, BINARY, &op_diff);
     rpn->add_operation("+", 3, BINARY, &op_sum);
+
+    ur = new UndoRedo();
 }
 
 int AppController::loop(int argc, char *argv[]) {
@@ -48,6 +51,7 @@ int AppController::loop(int argc, char *argv[]) {
     // view->set_display_regex_validator(rpn->tokenizer->regex_pattern_string);
     view->set_display_regex_validator(DISPLAY_REGEX);
 
+    view->connect_on_display_change(this, &AppController::on_display_change);
     view->connect_on_equal_click(this, &AppController::on_equal_click);
     view->connect_on_clear_click(this, &AppController::on_clear_click);
     view->connect_on_delete_click(this, &AppController::on_delete_click);
@@ -71,6 +75,13 @@ string AppController::solve(string expresion) {
     return rpn->eval_postfix(postfix);
 }
 
+void AppController::on_display_change(void) {
+    string change = view->read_display();
+    ur->input_string(change);
+    view->disable_redo_btn();
+    qDebug() << "change";
+}
+
 void AppController::on_equal_click(void) {
     string expresion = view->read_display();
     view->write_result(solve(expresion));
@@ -78,18 +89,46 @@ void AppController::on_equal_click(void) {
 
 void AppController::on_clear_click(void) {
     view->clear_display();
+
+    view->enable_undo_btn();
+    if (ur->is_redos_empty()) {
+        view->disable_redo_btn();
+    }
 }
 
 void AppController::on_delete_click(void) {
-    qDebug() << "DELETE";
+    string s = ur->undo();
+
+    view->write_display(s);
+
+    view->enable_redo_btn();
+    if (ur->is_undos_empty()) {
+        view->disable_undo_btn();
+    }
 }
 
 void AppController::on_prev_click(void) {
-    qDebug() << "PREV";
+    string s = ur->undo();
+    qDebug() << "prev: " << s;
+
+    view->write_display(s);
+
+    view->enable_redo_btn();
+    if (ur->is_undos_empty()) {
+        view->disable_undo_btn();
+    }
 }
 
 void AppController::on_next_click(void) {
-    qDebug() << "NEXT";
+    string s = ur->redo();
+    qDebug() << "next: " << s;
+
+    view->write_display(s);
+
+    view->enable_undo_btn();
+    if (ur->is_redos_empty()) {
+        view->disable_redo_btn();
+    }
 }
 
 

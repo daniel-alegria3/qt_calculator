@@ -2,6 +2,7 @@
 #include <QObject>
 #include <string>
 #include "rpn/rpn.h"
+#include "rpn/undoredo.h"
 #include "appview.h"
 
 class AppController : public QObject
@@ -10,6 +11,7 @@ class AppController : public QObject
 
 private:
     RPN *rpn;
+    UndoRedo *ur;
     AppView *view;
 
 public:
@@ -19,6 +21,7 @@ public:
     ~AppController();
 
 public slots:
+    void on_display_change(void);
     void on_equal_click(void);
     void on_clear_click(void);
     void on_delete_click(void);
