@@ -13,8 +13,8 @@ add_subdirectory(rpn)
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
-    src/appcontroller.cpp
-    src/appview.cpp
+    src/controller/appcontroller.cpp
+    src/view/appview.cpp
     resources.qrc
 )
 
@@ -22,8 +22,10 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
         rpn
     PUBLIC
-        $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/controller
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/view
+        # $<INSTALL_INTERFACE:include>
+        # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
 target_link_libraries(${PROJECT_NAME}
