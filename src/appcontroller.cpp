@@ -66,12 +66,16 @@ int AppController::loop(int argc, char *argv[]) {
 string AppController::solve(string expresion) {
     if (!rpn->is_correct_parenthesis(expresion)) {
         view->warn_display_parenthesis();
+        return "";
     }
+
     string postfix = rpn->infix_to_postfix(expresion);
     string result = rpn->eval_postfix(postfix);
     if (result == "") {
         view->warn_display_eval();
+        return "";
     }
+
     return rpn->eval_postfix(postfix);
 }
 
@@ -79,7 +83,6 @@ void AppController::on_display_change(void) {
     string change = view->read_display();
     ur->input_string(change);
     view->disable_redo_btn();
-    qDebug() << "change";
 }
 
 void AppController::on_equal_click(void) {
