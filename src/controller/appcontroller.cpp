@@ -1,7 +1,10 @@
 #include <QApplication>
+#include <QFile>
 #include <QDebug>
+#include <QLatin1String>
 #include <cmath>
 #include <cstddef>
+#include <ios>
 
 #include "appcontroller.h"
 #include "appview.h"
@@ -9,7 +12,7 @@
 #include "rpn/undoredo.h"
 
 #define WIN_WIDTH 400
-#define WIN_HEIGHT 500
+#define WIN_HEIGHT 150
 
 double op_sum(double a, double b);
 double op_diff(double a, double b);
@@ -37,12 +40,20 @@ AppController::AppController (void) {
 int AppController::loop(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
+    QFile file(":/styles/style.qss");
+    if (file.open(QFile::ReadOnly)) {
+        QString styleSheet = QLatin1String(file.readAll());
+        qApp->setStyleSheet(styleSheet);
+    }
+
     view = new AppView();
 
-    // view.setFixedSize(WIN_WIDTH, WIN_HEIGHT);
     view->setWindowTitle("Calculadora Basica");
+    view->setWindowIcon(QIcon(":/icons/calculator.ico"));
+    view->setMinimumSize(WIN_WIDTH, WIN_HEIGHT);
+    view->setMaximumSize(3*WIN_WIDTH, 3*WIN_HEIGHT);
+    view->resize(2*WIN_WIDTH, 2*WIN_HEIGHT);
 
-    view->setWindowIcon(QIcon(":/imgs/calculator.ico"));
 
     // TODO: FIX regex in rpn/src/tokenizer.cpp
     // "([0-9+-/*(){}\\[\\]]+)"

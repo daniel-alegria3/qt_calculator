@@ -1,7 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-    <file>imgs/calculator.ico</file>
-    <file>imgs/redo-arrow-symbol.png</file>
-    <file>imgs/undo-circular-arrow.png</file>
+    <file>icons/calculator.ico</file>
+    <file>icons/redo-arrow-symbol.png</file>
+    <file>icons/undo-circular-arrow.png</file>
+</qresource>
+<qresource prefix="/">
+    <file>styles/style.qss</file>
 </qresource>
 </RCC>

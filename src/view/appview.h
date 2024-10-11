@@ -11,6 +11,7 @@
 #include <QRegularExpressionValidator>
 #include <QTextCursor>
 #include <QMessageBox>
+#include <QSizePolicy>
 
 #include <QDebug>
 
@@ -58,6 +59,7 @@ public:
     void disable_undo_btn();
 
     QPushButton *button_appends(QString text);
+    QPushButton *button_slots(QString text);
     template<typename Func>
     QPushButton *button_does(QString text, Func method);
 
@@ -94,9 +96,12 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     QWidget *window = new QWidget(this);
 
     // frame
-    QFrame *f1 = new QFrame(window);
-    f1->setObjectName("f1");
-    f1->setStyleSheet("QFrame#b1 {border: 1px solid black}");
+    QFrame *f1 = new QFrame();
+    f1->setFrameShape(QFrame::Box);
+    f1->setFrameShadow(QFrame::Raised);
+    f1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    f1->setContentsMargins(5, 5, 5, 5);
+    f1->setLineWidth(3);
 
     // buttons
     QPushButton *b0 = button_appends("0");
@@ -125,29 +130,36 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     QPushButton *blbracket= button_appends("{");
     QPushButton *brbracket= button_appends("}");
 
-    bequal = new QPushButton("=");
-    bclear= new QPushButton("AC");
-    bdelete= new QPushButton("DEL");
+    bequal =  button_slots("=");
+    bclear= button_slots("AC");
+    bdelete = button_slots("DEL");
     /* bundo = new QPushButton(LEFT_ARROW); */
     /* bredo = new QPushButton(RIGHT_ARROW); */
-    bundo = new QPushButton();
-    bundo->setIcon(QIcon(":imgs/undo-circular-arrow.png"));
+    bundo = button_slots("");
+    bundo->setIcon(QIcon(":icons/undo-circular-arrow.png"));
     bundo->setEnabled(false);
-    bredo = new QPushButton();
-    bredo->setIcon(QIcon(":imgs/redo-arrow-symbol.png"));
+    bredo = button_slots("");
+    bredo->setIcon(QIcon(":icons/redo-arrow-symbol.png"));
     bredo->setEnabled(false);
 
     // displays
     display = new QLineEdit();
     connect(display, &QLineEdit::editingFinished, this, &AppView::keep_display_focus);
+    display->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    result = new QLabel("test");
+
+    result = new QLabel();
     result->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     result->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+    result->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Grid layout
     QGridLayout *grid = new QGridLayout(f1);
-    grid->setSpacing(0);
+    grid->setContentsMargins(5, 5, 5, 5);
+    grid->setSizeConstraint(QLayout::SetDefaultConstraint);
+    grid->setAlignment(Qt::AlignJustify);
+    grid->setSpacing(2);
+
     grid->addWidget(display, 0, 0, 1, 7);
     grid->addWidget(result, 1, 0, 1, 7);
 
@@ -190,6 +202,7 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     warn_msgbox->setDefaultButton(QMessageBox::Ok);
 
     //
+    window->setLayout(grid);
     setCentralWidget(window);
 }
 
@@ -226,9 +239,16 @@ inline string AppView::read_result() {
 ////////////////////////////////////////////////////////////////////////////////
 inline QPushButton *AppView::button_appends(QString text) {
     QPushButton *button = new QPushButton(text);
+    button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(button, &QPushButton::clicked, this, [this, text]() {
         append_display(text.toStdString());
     });
+    return button;
+}
+
+inline QPushButton *AppView::button_slots(QString text) {
+    QPushButton *button = new QPushButton(text);
+    button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     return button;
 }
 
