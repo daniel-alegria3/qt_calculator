@@ -47,6 +47,7 @@ public:
     string read_result();
 
     void set_display_regex_validator(string text);
+    void display_backspace();
 
     void warn_display_parenthesis();
     void warn_display_eval();
@@ -130,13 +131,15 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     /* bundo = new QPushButton(LEFT_ARROW); */
     /* bredo = new QPushButton(RIGHT_ARROW); */
     bundo = new QPushButton();
-    bredo = new QPushButton();
     bundo->setIcon(QIcon(":imgs/undo-circular-arrow.png"));
+    bundo->setEnabled(false);
+    bredo = new QPushButton();
     bredo->setIcon(QIcon(":imgs/redo-arrow-symbol.png"));
+    bredo->setEnabled(false);
 
     // displays
     display = new QLineEdit();
-    /* connect(display, &QLineEdit::editingFinished, this, &AppView::keep_display_focus); */
+    connect(display, &QLineEdit::editingFinished, this, &AppView::keep_display_focus);
 
     result = new QLabel("test");
     result->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -233,6 +236,10 @@ inline void AppView::set_display_regex_validator(string text) {
     QRegularExpression regex(QString::fromStdString("^(?:" + text + ")*$"));
     QRegularExpressionValidator *validator = new QRegularExpressionValidator(regex, this);
     display->setValidator(validator);
+}
+
+inline void AppView::display_backspace() {
+    display->backspace();
 }
 
 inline void AppView::warn_display_parenthesis() {

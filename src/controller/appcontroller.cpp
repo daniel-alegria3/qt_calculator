@@ -81,7 +81,9 @@ string AppController::solve(string expresion) {
 void AppController::on_display_change(void) {
     string change = view->read_display();
     ur->input_string(change);
+    view->enable_undo_btn();
     view->disable_redo_btn();
+    qDebug() << "change: " << change;
 }
 
 void AppController::on_equal_click(void) {
@@ -99,14 +101,7 @@ void AppController::on_clear_click(void) {
 }
 
 void AppController::on_delete_click(void) {
-    string s = ur->undo();
-
-    view->write_display(s);
-
-    view->enable_redo_btn();
-    if (ur->is_undos_empty()) {
-        view->disable_undo_btn();
-    }
+    view->display_backspace();
 }
 
 void AppController::on_prev_click(void) {
