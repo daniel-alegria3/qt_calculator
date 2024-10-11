@@ -47,9 +47,8 @@ int AppController::loop(int argc, char *argv[]) {
     // TODO: FIX regex in rpn/src/tokenizer.cpp
     // "([0-9+-/*(){}\\[\\]]+)"
     // "^(?:[0-9]+|sqrt|[\\+\\-*/(){}\\[\\]])*$"
-    #define DISPLAY_REGEX "^(?:[0-9]+(?:\\.[0-9]+)?|sqrt|[\\+\\-*/(){}\\[\\]])*$"
-    // view->set_display_regex_validator(rpn->tokenizer->regex_pattern_string);
-    view->set_display_regex_validator(DISPLAY_REGEX);
+
+    view->set_display_regex_validator(rpn->tokenizer->get_regex_pattern());
 
     view->connect_on_display_change(this, &AppController::on_display_change);
     view->connect_on_equal_click(this, &AppController::on_equal_click);

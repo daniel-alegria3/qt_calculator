@@ -230,7 +230,7 @@ inline QPushButton *AppView::button_appends(QString text) {
 }
 
 inline void AppView::set_display_regex_validator(string text) {
-    QRegularExpression regex(QString::fromStdString(text));
+    QRegularExpression regex(QString::fromStdString("^(?:" + text + ")*$"));
     QRegularExpressionValidator *validator = new QRegularExpressionValidator(regex, this);
     display->setValidator(validator);
 }
