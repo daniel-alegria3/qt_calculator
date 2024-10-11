@@ -12,6 +12,8 @@
 #include <QTextCursor>
 #include <QMessageBox>
 #include <QSizePolicy>
+#include <QShortcut>
+#include <QKeySequence>
 
 #include <QDebug>
 
@@ -24,6 +26,8 @@ class AppView : public QMainWindow
     Q_OBJECT
 
 private:
+    QShortcut *enter_sc;
+
     QPushButton *bequal;
     QPushButton *bclear;
     QPushButton *bdelete;
@@ -119,22 +123,22 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     QPushButton *bdiff = button_appends("-");
     QPushButton *bmul = button_appends("*");
     QPushButton *bdiv = button_appends("/");
-    QPushButton *bpow= button_appends("^");
-    QPushButton *bsqrt= button_appends("sqrt");
+    QPushButton *bpow = button_appends("^");
+    QPushButton *bsqrt = button_appends("sqrt");
     QPushButton *bdot = button_appends(".");
 
-    QPushButton *blparenthesis= button_appends("(");
-    QPushButton *brparenthesis= button_appends(")");
-    QPushButton *blbrace= button_appends("[");
-    QPushButton *brbrace= button_appends("]");
-    QPushButton *blbracket= button_appends("{");
-    QPushButton *brbracket= button_appends("}");
+    QPushButton *blparenthesis = button_appends("(");
+    QPushButton *brparenthesis = button_appends(")");
+    QPushButton *blbrace = button_appends("[");
+    QPushButton *brbrace = button_appends("]");
+    QPushButton *blbracket = button_appends("{");
+    QPushButton *brbracket = button_appends("}");
 
     bequal =  button_slots("=");
     bclear= button_slots("AC");
     bdelete = button_slots("DEL");
-    /* bundo = new QPushButton(LEFT_ARROW); */
-    /* bredo = new QPushButton(RIGHT_ARROW); */
+    // bundo = new QPushButton(LEFT_ARROW);
+    // bredo = new QPushButton(RIGHT_ARROW);
     bundo = button_slots("");
     bundo->setIcon(QIcon(":icons/undo-circular-arrow.png"));
     bundo->setEnabled(false);
@@ -146,7 +150,6 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
     display = new QLineEdit();
     connect(display, &QLineEdit::editingFinished, this, &AppView::keep_display_focus);
     display->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
 
     result = new QLabel();
     result->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -190,16 +193,22 @@ inline AppView::AppView(QWidget *parent) : QMainWindow(parent)
 
     grid->addWidget(b0, 5, 0);
     grid->addWidget(bdot, 5, 1);
-    grid->addWidget(bundo, 5, 2);
-    grid->addWidget(bredo, 5, 3);
-    grid->addWidget(bsqrt, 5, 4);
-    grid->addWidget(bequal, 5, 5, 1, 2);
+    grid->addWidget(bequal, 5, 2);
+    grid->addWidget(bsqrt, 5, 3, 1, 2);
+    grid->addWidget(bundo, 5, 5);
+    grid->addWidget(bredo, 5, 6);
 
     //
     warn_msgbox = new QMessageBox(window);
     warn_msgbox->setIcon(QMessageBox::Information);
     warn_msgbox->setStandardButtons(QMessageBox::Ok);
     warn_msgbox->setDefaultButton(QMessageBox::Ok);
+
+    //
+    QShortcut *enter_sc = new QShortcut(QKeySequence(Qt::Key_Return), this);
+    connect(enter_sc, &QShortcut::activated, [this](){
+        bequal->click();
+    });
 
     //
     window->setLayout(grid);

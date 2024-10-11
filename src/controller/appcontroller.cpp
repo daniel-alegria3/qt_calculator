@@ -74,6 +74,10 @@ int AppController::loop(int argc, char *argv[]) {
 }
 
 string AppController::solve(string expresion) {
+    if (expresion == "") {
+        return "";
+    }
+
     if (!rpn->is_correct_parenthesis(expresion)) {
         view->warn_display_parenthesis();
         return "";

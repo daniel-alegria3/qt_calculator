@@ -71,6 +71,10 @@ string RPN::infix_to_postfix(string expresion)
 
 string RPN::eval_postfix(string expresion)
 {
+    if (expresion == "") {
+        return "";
+    }
+
     operand_stack->empty();
 
     vector<string> postfix = tokenizer->tokenize(expresion);

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(calculator VERSION 0.0.1 LANGUAGES CXX)
 
-set(CMAKE_AUTOMOC ON)   # Enables automatic moc processing
+set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
