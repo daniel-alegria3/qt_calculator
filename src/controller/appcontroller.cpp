@@ -80,19 +80,17 @@ string AppController::solve(string expresion) {
         return "";
     }
 
-    // if (!rpn->is_correct_parenthesis(expresion)) {
-    //     view->warn_display_parenthesis();
-    //     return "";
-    // }
+    if (!rpn->is_correct_parenthesis(expresion)) {
+        view->warn_display_parenthesis();
+        return "";
+    }
 
     string postfix = rpn->infix_to_postfix(expresion);
-    qDebug() << "post = " << postfix;
     string result = rpn->eval_postfix(postfix);
-    qDebug() << "resu = " << result;
-    // if (result == "") {
-    //     view->warn_display_eval();
-    //     return "";
-    // }
+    if (result == "") {
+        view->warn_display_eval();
+        return "";
+    }
 
     return rpn->eval_postfix(postfix);
 }
