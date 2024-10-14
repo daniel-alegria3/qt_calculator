@@ -23,9 +23,6 @@ Ingresar una expresion en la entrada; ya sea mediante el teclado o los botones.
 Notar que la entrada no dejara entrar characteres desconocidos.
 
 <div align="center">
-  <video style="width: 100%; height: auto;" controls>
-    <source src="demo.mp4" type="video/mp4">
-    demo.mp4
-  </video>
+  <iframe width="100%" height="auto" src="https://www.youtube.com/embed/76TOzjNChbU " frameborder="0" allowfullscreen></iframe>
 </div>
 
