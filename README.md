@@ -22,7 +22,6 @@ crearse.
 Ingresar una expresion en la entrada; ya sea mediante el teclado o los botones.
 Notar que la entrada no dejara entrar characteres desconocidos.
 
-<div align="center">
-  <iframe width="100%" height="auto" src="https://www.youtube.com/embed/76TOzjNChbU " frameborder="0" allowfullscreen></iframe>
-</div>
+https://github.com/user-attachments/assets/f48beff6-c769-4500-a03c-1372399facbd
+
 
