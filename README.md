@@ -23,6 +23,9 @@ Ingresar una expresion en la entrada; ya sea mediante el teclado o los botones.
 Notar que la entrada no dejara entrar characteres desconocidos.
 
 <div align="center">
-    <video src="./demo.mkv" type="video/x-matroska"></video>
+  <video style="width: 100%; height: auto;" controls>
+    <source src="demo.mkv" type="video/x-matroska">
+    demo.mkv
+  </video>
 </div>
 
