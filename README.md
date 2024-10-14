@@ -24,8 +24,8 @@ Notar que la entrada no dejara entrar characteres desconocidos.
 
 <div align="center">
   <video style="width: 100%; height: auto;" controls>
-    <source src="demo.mkv" type="video/x-matroska">
-    demo.mkv
+    <source src="demo.mp4" type="video/mp4">
+    demo.mp4
   </video>
 </div>
 
