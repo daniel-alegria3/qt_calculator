@@ -1,4 +1,6 @@
 #include <cmath>
+#include <complex>
+#include <stdexcept>
 #include <stdlib.h>
 #include "rpn/stack.h"
 #include "rpn/tokenizer.h"
@@ -30,10 +32,13 @@ string RPN::infix_to_postfix(string expresion)
         // printf("%s\n", s.c_str());
 
         if ( is_unary_op(s) ) { // solucion temporal a operaciones unarias
+            if (stack->is_empty()) {
+                return "";
+            }
             stack->push(s);
         } else
 
-        if ( get_precedence(s) > 0) { // es una operacion
+        if ( get_precedence(s) > 0) { // es una operacion binaria
             int prec;
             while (!stack->is_empty()
                    && (prec = get_precedence(stack->peek())) > 0
@@ -47,8 +52,10 @@ string RPN::infix_to_postfix(string expresion)
 
         } else if (type == "CLOSING") { // ), ], }
             while (!stack->is_empty() && stack->peek() != opposite) {
+                // while not finding the matching opening symbol
                 string top = stack->pop();
                 ty = get_grouping_type(top);
+                // TODO: fix redudancy in this if-statement with the while-loop
                 if (ty != "OPENING") {
                     output += top + " ";
                 }
@@ -88,10 +95,18 @@ string RPN::eval_postfix(string expresion)
 
         op = get_operation(s);
 
-        if (op == NULL) {
+        if (op == NULL) { // not an operation
             operand_stack->push(stof(s));
 
-        } else if (op->type == BINARY) {
+        } else if (op->type == UNARY) { // unary operation
+            if (operand_stack->is_empty()) {
+                return "ERROR: Tried to pop empty stack";
+            };
+            op1 = operand_stack->pop();
+
+            operand_stack->push(op->func(op1, 0)); // TODO: fix unary functions
+                                                   // being defined with two
+        } else if (op->type == BINARY) { // binary operation
             if (operand_stack->is_empty()) {
                 // "ERROR: Tried to pop empty stack";
                 return "";
@@ -106,19 +121,15 @@ string RPN::eval_postfix(string expresion)
 
             operand_stack->push(op->func(op1, op2));
 
-        } else if (op->type == UNARY) {
-            if (operand_stack->is_empty()) {
-                return "ERROR: Tried to pop empty stack";
-            };
-            op1 = operand_stack->pop();
-
-            operand_stack->push(op->func(op1, 0)); // TODO: fix unary functions
-                                                   // being defined with two
         } else if (op->type == FUNCTION) {
+            // TODO: implement function logic
             op->func(0, 0);
         }
     }
 
+    if (operand_stack->length() > 1) {
+        return "";
+    }
     return to_string(operand_stack->peek());
 }
 

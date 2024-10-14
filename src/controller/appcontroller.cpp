@@ -16,6 +16,7 @@
 
 double op_sum(double a, double b);
 double op_diff(double a, double b);
+double op_diff_unary(double a, double b);
 double op_mul(double a, double b);
 double op_pow(double a, double b);
 double op_div(double a, double b);
@@ -27,6 +28,7 @@ AppController::AppController (void) {
     rpn->add_grouping("[", "]");
     rpn->add_grouping("{", "}");
 
+    rpn->add_operation("-", 1, UNARY, &op_diff_unary);
     rpn->add_operation("sqrt", 1, UNARY, &op_sqrt);
     rpn->add_operation("^", 1, BINARY, &op_pow);
     rpn->add_operation("/", 2, BINARY, &op_div);
@@ -78,17 +80,19 @@ string AppController::solve(string expresion) {
         return "";
     }
 
-    if (!rpn->is_correct_parenthesis(expresion)) {
-        view->warn_display_parenthesis();
-        return "";
-    }
+    // if (!rpn->is_correct_parenthesis(expresion)) {
+    //     view->warn_display_parenthesis();
+    //     return "";
+    // }
 
     string postfix = rpn->infix_to_postfix(expresion);
+    qDebug() << "post = " << postfix;
     string result = rpn->eval_postfix(postfix);
-    if (result == "") {
-        view->warn_display_eval();
-        return "";
-    }
+    qDebug() << "resu = " << result;
+    // if (result == "") {
+    //     view->warn_display_eval();
+    //     return "";
+    // }
 
     return rpn->eval_postfix(postfix);
 }
@@ -153,6 +157,7 @@ AppController::~AppController()
 ////////////////////////////////////////////////////////////////////////////////
 double op_sum(double a, double b) { return a + b; }
 double op_diff(double a, double b) { return a - b; }
+double op_diff_unary(double a, double b) { return -a; }
 double op_mul(double a, double b) { return a * b; }
 double op_pow(double a, double b) {
     int n = (int) b;

@@ -45,7 +45,7 @@ vector<string> Tokenizer::tokenize(string input)
 
 string Tokenizer::create_regex_pattern_string(const vector<string> delimiters)
 {
-    // TODO: this regular expression doesnt allow 'sqrt' to be placed
+    // matches any number (decimal or not)
     string delimiter_pattern = R"(([0-9]*\.[0-9]+|[0-9]+|)";
 
     for (const auto& delim : delimiters) {

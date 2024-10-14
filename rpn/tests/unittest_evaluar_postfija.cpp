@@ -34,8 +34,8 @@ TEST_CASE("RPN should evaluate postfix expression", "[unittest_eval_postfix]") {
                WithinRel(7.071, PERCENTAGE) || WithinAbs(0, MARGIN));
     CHECK_THAT(stof(rpn->eval_postfix("2.4 52 + 3 - 1.5 +")),
                WithinRel(52.9, PERCENTAGE) || WithinAbs(0, MARGIN));
-    CHECK_THAT(stof(rpn->eval_postfix("1.1 5.9 / 2.7 3.4 4.3 / /")),
-               WithinRel(3.6, PERCENTAGE) || WithinAbs(0, MARGIN));
+    CHECK_THAT(stof(rpn->eval_postfix("1.1 5.9 2.7 3.4 4.3 / / / /")),
+               WithinRel(-1.2, PERCENTAGE) || WithinAbs(0, MARGIN));
     CHECK_THAT(stof(rpn->eval_postfix("25 3.50 + 50 2 15 + - + 40 50 - 25 15 - - -")),
                WithinRel(81.5, PERCENTAGE) || WithinAbs(0, MARGIN));
 }
